@@ -1,25 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+
+import Blog from './Blog';
+import Introduction from './Introduction';
+
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edita <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [screenState, setScreenState] = useState('blog');
+  
+
+  switch (screenState) {
+    case 'dashboard':
+      break;
+    case 'blog':
+    default:
+      return (
+        <Blog />
+      );
+  }
 }
 
 export default App;
