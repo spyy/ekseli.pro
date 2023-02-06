@@ -6,20 +6,22 @@ import Content from './Content';
 
 import appConfig from './config/app.json'
 import defaultConfig from './config/default.json'
+import Sheet from './Sheet';
 
 
-function Blog() {
-  const [files, setFiles] = useState([]);
+const Blog = props => {
+  const [spreadsheet, setSpreadsheet] = useState('');
+  const [config, setConfig] = useState('');
   const [spreadsheets, setSpreadsheets] = useState([]);
   const [configs, setConfigs] = useState([]);
-  const [loginState, setLoginState] = useState('loading');
+  const [state, setState] = useState('loading');
 
   let tokenClient;
 
   useEffect(() => {
-    console.log('state: ' + loginState);
+    console.log('state: ' + state);
 
-    switch (loginState) {
+    switch (state) {
       case 'loading':
         break;
       case 'loaded':
@@ -27,36 +29,35 @@ function Blog() {
         window.gapi.load('client', initializeApi);        
         break;               
       case 'token':
-        setLoginState('apiInitialized');
+        setState('apiInitialized');
         break;
       case 'apiInitialized':
-        setLoginState('getFiles');
+        setState('getFiles');
         break;
       case 'getFiles':
         getFiles();
         break;
+      case 'spreadsheets':
+        if (spreadsheets.length) {
+          setState('getConfigs');
+        } else {
+          console.log('sssssssssss')
+        }
+        break;
       case 'getConfigs':
         getConfigs();
+        break;
+      case 'configs':
+        break;
+      case 'spreadsheetSelected':
+        break;
+      case 'spreadsheetChanged':
+        setState('spreadsheetSelected');
         break;
       default:
         break;
     }
-  },[loginState]);
-
-  const handleCredentialResponse = token => {
-    console.log(token);
-
-    setLoginState('credentials');
-  }
-
-  const initGoogle = () => {
-    const args = {
-      client_id: appConfig.client_id,
-      callback: handleCredentialResponse
-    };
-
-    window.google.accounts.id.initialize(args);
-  }
+  },[state]);
 
   const handleGetFilesResponse = body => {
     let confs = [];
@@ -64,11 +65,17 @@ function Blog() {
     body.files.forEach(element => {
       const obj = Object.assign(defaultConfig, { ref: element });
       confs.push(obj);
+
+      //console.log(obj);
     });
 
-    setConfigs(body.files);
+    //setConfigs(body.files);
+
+    console.log(body.files);
 
     setSpreadsheets(body.files);
+
+    setState('spreadsheets');
   }
 
   const handleGetConfigsResponse = body => {
@@ -84,7 +91,7 @@ function Blog() {
   }
 
   const parseJson = res => {
-    console.log(res); 
+    //console.log(res); 
     
     return JSON.parse(res.body);
   }
@@ -102,7 +109,6 @@ function Blog() {
     window.gapi.client.request(args)
       .then(parseJson)
       .then(handleGetFilesResponse)
-      .then(setLoginState('getConfigs'))
       .catch(err => console.log(err))
   }
 
@@ -119,13 +125,14 @@ function Blog() {
     window.gapi.client.request(args)
       .then(parseJson)
       .then(handleGetConfigsResponse)
+      .then(setState('configs'))
       .catch(err => console.log(err))
   }
 
   const handleTokenResponse = token => {
     console.log(token);
 
-    setLoginState('token');
+    setState('token');
   }
 
   const initializeApi= () => {
@@ -136,13 +143,13 @@ function Blog() {
     };
     
     window.gapi.client.init(args)
-      .then(res => setLoginState('apiInitialized'))
+      .then(res => setState('apiInitialized'))
       .catch(err => console.log(err))
   
   }
 
   const onLoad = event => {
-    setLoginState('loaded');
+    setState('loaded');
   }
 
   window.addEventListener('load', event => onLoad(event));
@@ -167,18 +174,42 @@ function Blog() {
 
   }
 
+  const onSpreadsheet = spreadsheet => {
+    console.log(spreadsheet);
+
+    spreadsheet == '' ? setState('spreadsheetSelected') : setState('spreadsheetChanged'); 
+    
+    setSpreadsheet(spreadsheet);
+  }
+
   const renderSignInButton = () => {
-    if (loginState == 'loaded') {
+    if (state == 'loaded') {
       return (
         <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignIn}>Kirjaudu sisään</a>
       );
-    } else if (loginState == 'initialized') {
+    } else if (state == 'initialized') {
       return (
         <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignOut}>Kirjaudu ulos</a>
       );
     } else {
       return null;
     }
+  }
+
+  const renderContent = props => {
+    switch (state) {
+      case 'configs':
+        return (
+          <Content spreadsheets={ spreadsheets } configs={ configs } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
+        );
+      case 'spreadsheetSelected':
+        return (<Sheet spreadsheet={ spreadsheet } />);
+      case 'spreadsheetChanged':
+        return (<></>);
+      default:
+        return (<Introduction />);
+    }
+
   }
 
   return (
@@ -199,9 +230,9 @@ function Blog() {
         </header>
       </div>
 
-      <NavBar spreadsheets={ spreadsheets } />
+      <NavBar spreadsheets={ spreadsheets } selected={ spreadsheet } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
 
-      { spreadsheets.length ? <Content spreadsheets={ spreadsheets } configs={ configs } /> : <Introduction /> }
+      { renderContent(props) }
     </>
   );
 }

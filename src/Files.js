@@ -1,5 +1,5 @@
 
-function Content(props) {
+function Files(props) {
     const renderRow = (element, index) => {
         return (
             <div key={ parseInt(index) } className="row mb-2">
@@ -34,7 +34,7 @@ function Content(props) {
     return (
         <main className="container">            
             { 
-                props.spreadsheets.map((element, index) => { 
+                props.configs.map((element, index) => { 
                     return renderRow(element, index);
                 }) 
             }
@@ -43,4 +43,4 @@ function Content(props) {
   }
   
   
-  export default Content;
+  export default Files;
