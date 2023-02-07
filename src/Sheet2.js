@@ -15,7 +15,7 @@ const Sheet = props => {
           case 'getValues':
             getValues();
             break;               
-          case 'values':
+          case 'ready':
             break;
           default:
             break;
@@ -28,17 +28,14 @@ const Sheet = props => {
         return JSON.parse(res.body);
     }
 
-    const handleResponse = body => {
+    const handleGetValuesResponse = body => {
         console.log(body);
 
         setValues(body.values);
-
-        setState('values');
     }
 
-    const getValues = () => {    
-        const range = props.spreadsheet.sheets[props.selected].properties.title;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheet.spreadsheetId + '/values/' + range;
+    const getValues = () => {
+        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheet.id + '/values/1:100'
         const args = {
           'path': path
         };
@@ -47,8 +44,28 @@ const Sheet = props => {
         
         window.gapi.client.request(args)
           .then(parseJson)
-          .then(handleResponse)
+          .then(handleGetValuesResponse)
+          .then(setState('ready'))
           .catch(err => console.log(err))
+    }
+
+
+    const renderLoading = props => {
+        return (
+            <table className="table table-striped caption-top">
+                <caption>{ '1-' + '10s0' }</caption>
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Etunimi</th>
+                    <th scope="col">Lukumäärä</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>                
+                </tbody>
+            </table>
+        );        
     }
 
     const renderHead = props => {
@@ -82,12 +99,20 @@ const Sheet = props => {
         );
     }
 
+    const renderValues = props => {
+        return (
+            <table className="table table-striped caption-top">
+                <caption>{ '1-' + values.length }</caption>
+                { renderHead(props) }
+                { renderBody(props) }
+            </table>
+        );
+    }
+
     return (
-        <table className="table table-striped caption-top">
-            <caption>{ '1-' + values.length }</caption>
-            { renderHead(props) }
-            { renderBody(props) }
-        </table>
+        <main className="container">            
+            { state == 'getValues' ? renderLoading(props) : renderValues(props) }
+        </main>
     );
 }
 

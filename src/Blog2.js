@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 import Introduction from './Introduction';
+import NavBar from './NavBar';
 import Content from './Content';
-import Spreadsheet from './Spreadsheet';
 
 import appConfig from './config/app.json'
 import defaultConfig from './config/default.json'
+import Sheet from './Sheet2';
 
 
 const Blog = props => {
@@ -14,7 +15,6 @@ const Blog = props => {
   const [spreadsheets, setSpreadsheets] = useState([]);
   const [configs, setConfigs] = useState([]);
   const [state, setState] = useState('loading');
-  const [loginState, setLoginState] = useState('logged out');
 
   let tokenClient;
 
@@ -25,6 +25,7 @@ const Blog = props => {
       case 'loading':
         break;
       case 'loaded':
+        //initGoogle();
         window.gapi.load('client', initializeApi);        
         break;               
       case 'token':
@@ -39,19 +40,19 @@ const Blog = props => {
       case 'spreadsheets':
         if (spreadsheets.length) {
           setState('getConfigs');
+        } else {
+          console.log('sssssssssss')
         }
         break;
       case 'getConfigs':
         getConfigs();
         break;
       case 'configs':
-        setState('start');
-        break;
-      case 'start':
-        setSpreadsheet('');
-        setConfig('');
         break;
       case 'spreadsheetSelected':
+        break;
+      case 'spreadsheetChanged':
+        setState('spreadsheetSelected');
         break;
       default:
         break;
@@ -87,8 +88,6 @@ const Blog = props => {
     });
 
     setConfigs(confs);
-
-    setState('configs');
   }
 
   const parseJson = res => {
@@ -126,13 +125,12 @@ const Blog = props => {
     window.gapi.client.request(args)
       .then(parseJson)
       .then(handleGetConfigsResponse)
+      .then(setState('configs'))
       .catch(err => console.log(err))
   }
 
   const handleTokenResponse = token => {
     console.log(token);
-
-    setLoginState('logged in');
 
     setState('token');
   }
@@ -179,35 +177,37 @@ const Blog = props => {
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
 
-    setState('spreadsheetSelected'); 
+    spreadsheet == '' ? setState('spreadsheetSelected') : setState('spreadsheetChanged'); 
     
     setSpreadsheet(spreadsheet);
   }
 
   const renderSignInButton = () => {
-    if (loginState == 'logged out') {
+    if (state == 'loaded') {
       return (
-        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignIn}>Kirjaudu</a>
+        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignIn}>Kirjaudu sisään</a>
+      );
+    } else if (state == 'initialized') {
+      return (
+        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignOut}>Kirjaudu ulos</a>
       );
     } else {
-      return (
-        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignOut}>Ulos</a>
-      );
+      return null;
     }
   }
 
   const renderContent = props => {
     switch (state) {
-      case 'start':
-          return (
-            <Content spreadsheets={ spreadsheets } configs={ configs } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
-          );
+      case 'configs':
+        return (
+          <Content spreadsheets={ spreadsheets } configs={ configs } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
+        );
       case 'spreadsheetSelected':
-          return (
-            <Spreadsheet spreadsheet={ spreadsheet } />
-          );
+        return (<Sheet spreadsheet={ spreadsheet } />);
+      case 'spreadsheetChanged':
+        return (<></>);
       default:
-          return (<Introduction />);
+        return (<Introduction />);
     }
 
   }
@@ -218,7 +218,7 @@ const Blog = props => {
         <header className="blog-header lh-1 py-3">
           <div className="row flex-nowrap justify-content-between align-items-center">
             <div className="col-4 pt-1">
-              <a className="link-secondary" href="#" onClick={() => setState('start')}>Alkuun</a>
+              <a className="link-secondary" href="#">Työpöytä</a>
             </div>
             <div className="col-4 text-center">
               <a className="blog-header-logo text-dark" href="#">Ekseli</a>
@@ -229,6 +229,8 @@ const Blog = props => {
           </div>
         </header>
       </div>
+
+      <NavBar spreadsheets={ spreadsheets } selected={ spreadsheet } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
 
       { renderContent(props) }
     </>
