@@ -1,5 +1,5 @@
 
-function Content(props) {
+const Content = props => {
     const renderRow = (element, index) => {
         return (
             <div key={ parseInt(index) } className="row mb-2">

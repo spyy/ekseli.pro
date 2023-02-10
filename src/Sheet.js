@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Row from './Row';
+import ArrowRightCircle from './ArrowRightCircle';
 
 
 const Sheet = props => {
@@ -16,6 +16,8 @@ const Sheet = props => {
             getValues();
             break;               
           case 'values':
+            break;
+          case 'selected':
             break;
           default:
             break;
@@ -62,10 +64,29 @@ const Sheet = props => {
                     <th scope="col">D</th>
                     <th scope="col">E</th>
                     <th scope="col">F</th>
-                    <th scope="col">G</th>            
+                    <th scope="col">G</th>
+                    <th scope="col">H</th>
+                    <th scope="col"></th>            
                 </tr>
             </thead>
         );
+    }
+
+    const renderRow = (element, index) => {      
+      return (
+        <tr key={ index }>
+          <th scope="row">{ index + 1 }</th>
+          <td>{ element[0] }</td>
+          <td>{ element[1] }</td>
+          <td>{ element[2] }</td>
+          <td>{ element[3] }</td>
+          <td>{ element[4] }</td>
+          <td>{ element[5] }</td>
+          <td>{ element[6] }</td>
+          <td>{ element[7] }</td>
+          <td><ArrowRightCircle onPress={ () => props.onRowSelected(element, index) } /></td>
+        </tr>
+      );
     }
 
     const renderBody = props => {
@@ -73,9 +94,7 @@ const Sheet = props => {
             <tbody>
             {
               values.map((element, index) => {
-                return (
-                  <Row key={index} number={index + 1} item={element} />
-                );
+                return renderRow(element, index);
               })
             }
           </tbody>
