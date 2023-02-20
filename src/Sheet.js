@@ -75,7 +75,7 @@ const Sheet = props => {
     const renderRow = (element, index) => {      
       return (
         <tr key={ index }>
-          <th scope="row">{ index + 1 }</th>
+          <th scope="row"><a className="d-inline-block" href='#' onClick={() => props.onRowSelected(element, index)}>{ index + 1 }</a></th>
           <td>{ element[0] }</td>
           <td>{ element[1] }</td>
           <td>{ element[2] }</td>
@@ -84,7 +84,6 @@ const Sheet = props => {
           <td>{ element[5] }</td>
           <td>{ element[6] }</td>
           <td>{ element[7] }</td>
-          <td><ArrowRightCircle onPress={ () => props.onRowSelected(element, index) } /></td>
         </tr>
       );
     }

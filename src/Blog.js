@@ -3,18 +3,18 @@ import React, { useState, useEffect } from 'react';
 import Introduction from './Introduction';
 import Content from './Content';
 import Spreadsheet from './Spreadsheet';
+import NavBar from './NavBar';
 
 import appConfig from './config/app.json'
 import defaultConfig from './config/default.json'
 
 
 const Blog = props => {
-  const [spreadsheet, setSpreadsheet] = useState('');
-  const [config, setConfig] = useState('');
+  const [spreadsheet, setSpreadsheet] = useState({});
   const [spreadsheets, setSpreadsheets] = useState([]);
-  const [configs, setConfigs] = useState([]);
   const [state, setState] = useState('loading');
   const [loginState, setLoginState] = useState('logged out');
+  const [firstSelection, setFirstSelection] = useState('');
 
   let tokenClient;
 
@@ -38,21 +38,22 @@ const Blog = props => {
         break;
       case 'spreadsheets':
         if (spreadsheets.length) {
-          setState('getConfigs');
+          setState('content');
         }
-        break;
-      case 'getConfigs':
-        getConfigs();
-        break;
-      case 'configs':
-        setState('start');
-        break;
-      case 'start':
+        break;      
+      case 'content':
         setSpreadsheet('');
-        setConfig('');
         break;
       case 'spreadsheetSelected':
+        setState('spreadsheetChanged');
         break;
+      case 'spreadsheetChanged':
+          break;
+      case 'metadataSelected':
+        setState('metadataChanged');
+        break;
+      case 'metadataChanged':
+          break;
       default:
         break;
     }
@@ -78,16 +79,6 @@ const Blog = props => {
   }
 
   const handleGetConfigsResponse = body => {
-    let confs = [];
-
-    configs.forEach(c => {
-      const found = body.files.find(element => element.name == c.name);
-
-      found ? confs.push(found) : confs.push(c);
-    });
-
-    setConfigs(confs);
-
     setState('configs');
   }
 
@@ -184,6 +175,15 @@ const Blog = props => {
     setSpreadsheet(spreadsheet);
   }
 
+  const onFirstSelection = (spreadsheet, selection) => {
+    console.log('onFirstSelection');
+
+    setFirstSelection(selection); 
+
+    onSpreadsheet(spreadsheet);
+  }
+
+
   const renderSignInButton = () => {
     if (loginState == 'logged out') {
       return (
@@ -196,20 +196,36 @@ const Blog = props => {
     }
   }
 
-  const renderContent = props => {
+  const renderMain = props => {
     switch (state) {
-      case 'start':
-          return (
-            <Content spreadsheets={ spreadsheets } configs={ configs } onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
-          );
-      case 'spreadsheetSelected':
-          return (
-            <Spreadsheet spreadsheet={ spreadsheet } />
-          );
+      case 'content':
+        return (
+          <Content 
+            spreadsheets={ spreadsheets } 
+            onMetadata={ spreadsheet => onFirstSelection(spreadsheet, 'metadata') } 
+            onSpreadsheet={ spreadsheet => onFirstSelection(spreadsheet, 'spreadsheet') } />
+        );
+      case 'spreadsheetSelected':        
+        return (<></>);
+      case 'spreadsheetChanged':
+        return (
+          <Spreadsheet firstSelection={firstSelection} spreadsheet={ spreadsheet } />
+        );
       default:
           return (<Introduction />);
     }
+  }
 
+  const renderNav = props => {
+    switch (state) {
+      case 'spreadsheetSelected':       
+      case 'spreadsheetChanged':
+        return (
+            <NavBar spreadsheets={ spreadsheets } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
+        );
+      default:
+          return null;
+    }
   }
 
   return (
@@ -218,7 +234,7 @@ const Blog = props => {
         <header className="blog-header lh-1 py-3">
           <div className="row flex-nowrap justify-content-between align-items-center">
             <div className="col-4 pt-1">
-              <a className="link-secondary" href="#" onClick={() => setState('start')}>Alkuun</a>
+              <a className="link-secondary" href="#" onClick={() => setState('content')}>Alkuun</a>
             </div>
             <div className="col-4 text-center">
               <a className="blog-header-logo text-dark" href="#">Ekseli</a>
@@ -228,16 +244,17 @@ const Blog = props => {
             </div>        
           </div>
         </header>
+        { renderNav(props) }
       </div>
 
-      { renderContent(props) }
+      { renderMain(props) }
 
-      <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">© 2022–2023 ekseli.fi</p>
-        <ul class="list-inline">
-          <li class="list-inline-item"><a href="#">Privacy</a></li>
-          <li class="list-inline-item"><a href="#">Terms</a></li>
-          <li class="list-inline-item"><a href="#">Support</a></li>
+      <footer className="my-5 pt-5 text-muted text-center text-small">
+        <p className="mb-1">© 2022–2023 ekseli.fi</p>
+        <ul className="list-inline">
+          <li className="list-inline-item"><a href="#">Privacy</a></li>
+          <li className="list-inline-item"><a href="#">Terms</a></li>
+          <li className="list-inline-item"><a href="#">Support</a></li>
         </ul>
       </footer>
     </>

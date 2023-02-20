@@ -166,10 +166,10 @@ const Row = props => {
           <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div className="row g-3 mb-3">
               <div className="col-md-6">
-                <button class="w-100 btn btn-outline-primary btn-lg" type="button" onClick={() => props.onCancel()}>Peru</button>
+                <button className="w-100 btn btn-outline-primary btn-lg" type="button" onClick={() => props.onCancel()}>Peru</button>
               </div>
               <div className="col-md-6">
-                <button class="w-100 btn btn-primary btn-lg" type="button" onClick={onSave}>Talleta</button>
+                <button className="w-100 btn btn-outline-primary btn-lg" type="button" onClick={onSave}>Talleta</button>
               </div>
             </div>
           </div>

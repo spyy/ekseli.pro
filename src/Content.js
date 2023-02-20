@@ -10,7 +10,7 @@ const Content = props => {
                         <h3 className="mb-0">{ element.name }</h3>
                         <div className="mb-1 text-muted">Päivitetty</div>
                         <p className="card-text mb-auto">Tarvitset erillesen salasanan konfiguraation avaukseen.</p>
-                        <a href="#" className="stretched-link">Avaa</a>
+                        <a href="#" className="stretched-link" onClick={ () => props.onMetadata(element) }>Avaa</a>
                     </div>
 
                     </div>

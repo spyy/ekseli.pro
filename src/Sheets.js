@@ -1,27 +1,31 @@
 
 const Sheets = props => {
-    const renderTab = (element, index) => {
+    const renderItem = (element, index) => {
         if (element.properties.index == props.selected) {
             return (
-                <a href="#" key={ parseInt(index) } className="p-2 link-primary" onClick={() => console.log('click')}>{ element.properties.title }</a>
+                <li className="nav-item" key={ parseInt(index) }>
+                    <a className="nav-link active" aria-current="true">{ element.properties.title }</a>
+                </li>
             );
         } else {
             return (
-                <a href="#" key={ parseInt(index) } className="p-2 link-secondary" onClick={() => props.onSheet(element)}>{ element.properties.title }</a>
+                <li className="nav-item" key={ parseInt(index) }>
+                    <a className="nav-link" href="#" onClick={() => props.onSheet(element)}>{ element.properties.title }</a>
+                </li>
             );
         }
     }
     
     return (
-        <div className="nav-scroller py-1 mb-2">
-            <nav className="nav d-flex justify-content-center">
-            { 
-                props.spreadsheet.sheets.map((element, index) => { 
-                    return renderTab(element, index);
-                }) 
-            }
-            </nav>
-        </div>            
+        <div className="card-header">
+            <ul className="nav nav-tabs card-header-tabs">
+                { 
+                    props.spreadsheet.sheets.map((element, index) => { 
+                        return renderItem(element, index);
+                    }) 
+                }
+            </ul>
+        </div>
     );
   }
   
