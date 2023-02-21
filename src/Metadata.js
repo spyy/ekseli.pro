@@ -1,32 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import sheetDefault from './config/sheet.json'
-import alphabets from './config/alphabets.json'
 
 import MetadataModal from './MetadataModal';
 
-const jupi = {
-	'columns': {
-		'A': {
-			'id': 'A',
-			'name': 'A'
-		},
-		'B': {
-			'id': 'B',
-			'name': 'B'
-		}
-	}
-}
 
 
 const Metadata = props => {
     const [state, setState] = useState('getDeveloperMetadata');
-    const [metadata, setMetadata] = useState(sheetDefault);
-    const [columnCount, setColumnCount] = useState(sheetDefault.metadataValue);
-    const [row, setRow] = useState('fff');
-    const [rowIndex, setRowIndex] = useState(-1);
-
-    const [show, setShow] = useState('hidden');
+    const [metadata, setMetadata] = useState({});
+    const [metadataChanged, setMetadataChanged] = useState(false);
+    const [metadataFound, setMetadataFound] = useState(false);
+    const [columnCount, setColumnCount] = useState(0);
+    const [row, setRow] = useState({});
+    const [rowKey, setRowKey] = useState('');
 
   
     useEffect(() => {
@@ -36,13 +23,24 @@ const Metadata = props => {
             case 'getDeveloperMetadata':
                 getDeveloperMetadata();
                 break;               
+            case 'metadataNotFound':
+                setMetadata(sheetDefault);
+                setColumnCount(sheetDefault.columnCount);
+                setState('metadata');
+                break;
+            case 'metadataFound':
+                setMetadataFound(true);
+                setColumnCount(metadata.columnCount);
+                setState('metadata');
+                break;
             case 'metadata':
                 break;
-            case 'sheetSelected':
-                setState('sheetChanged');
+            case 'metadataUpdated':         
+                setMetadataFound(true);
+                setMetadataChanged(false);
+                setState('metadataChanged');
                 break;
-            case 'sheetChanged':
-                break;            
+            case 'metadataChanged':         
             case 'showModal':
             case 'hideModal':
                 break;            
@@ -69,18 +67,19 @@ const Metadata = props => {
         switch (typeof(metadataValue)){
             case 'object':
                 setMetadata(metadataValue);
+                setMetadataFound(true);
                 break;
             default:
                 console.log(typeof(metadataValue));
         }
 
-        setState('metadata');
+        setState('metadataFound');
     }
 
     const handleErrorResponse = err => {
         console.log(err);
 
-        setState('metadata');
+        setState('metadataNotFound');
     }
 
     const getDeveloperMetadata = () => {
@@ -99,14 +98,93 @@ const Metadata = props => {
           .catch(handleErrorResponse)
     }
 
-    const onSave = () => {
-        //const values = generateValues();
-    
-        props.onSave(metadata);
+    const handleUpdateResponse = body => {
+        console.log(body);
+
+        setState('metadataUpdated');
     }
 
-    const onSaveColumn = column => {
-        console.log(column);
+    const createDeveloperMetadata = () => {
+        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
+        const args = {
+            path: path,
+            method: 'POST',
+            body: {
+                requests: [{
+                    createDeveloperMetadata: {
+                        developerMetadata: {
+                            metadataId: props.sheetId + 1,
+                            metadataKey: 'configuration',
+                            metadataValue: JSON.stringify(metadata),
+                            visibility: 'DOCUMENT',
+                            location: {
+                                sheetId: props.sheetId
+                            }
+                        }
+                    }
+                }]
+            }
+        };
+
+        console.log(path);
+        console.log(args);
+        
+        window.gapi.client.request(args)
+          .then(parseBody)
+          .then(handleUpdateResponse)
+          .catch(err => console.log(err))
+    }
+
+    const updateDeveloperMetadata = () => {
+        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
+        const args = {
+            path: path,
+            method: 'POST',
+            body: {
+                requests: [{
+                    updateDeveloperMetadata: {
+                        fields: '*',
+                        dataFilters: [{
+                            developerMetadataLookup: {
+                                metadataId: props.sheetId + 1
+                            }
+                        }],
+                        developerMetadata: {
+                            metadataKey: 'configuration',
+                            metadataValue: JSON.stringify(metadata),
+                            location: {
+                                sheetId: props.sheetId
+                            },
+                            visibility: 'DOCUMENT'
+                        }
+                    }
+                }]
+            }
+        };
+
+        console.log(path);
+        console.log(args);
+        
+        window.gapi.client.request(args)
+          .then(parseBody)
+          .then(handleUpdateResponse)
+          .catch(err => console.log(err))
+    }
+
+    const onSave = () => {
+        if (metadataFound) {
+            updateDeveloperMetadata();            
+        } else {
+            createDeveloperMetadata();
+        }        
+    }
+
+    const onSaveColumn = (key, value) => {
+        metadata.columns[key] = value;
+
+        setMetadata(metadata);
+
+        setMetadataChanged(true);
 
         setState('hideModal');
     }
@@ -117,23 +195,24 @@ const Metadata = props => {
         setState('hideModal');
     }
 
-    const onRowClicked2 = (element, index)  => {
-        console.log(element);
-
-        setRow(element);
-        setRowIndex(index);
-
-        setState('showModal');
-    }
-
     const onRowClicked = (key, value)  => {
         console.log(key);
         console.log(value);   
         
         setRow(value);
-        setRowIndex(key);
+        setRowKey(key);
 
         setState('showModal');
+    }
+
+    const onChange = event  => {
+        metadata.columnCount = event.target.value;
+
+        setMetadata(metadata);
+
+        setMetadataChanged(true);  
+
+        setColumnCount(event.target.value);
     }
 
     const renderHead = props => {
@@ -149,20 +228,6 @@ const Metadata = props => {
                     <th scope="col">Syöte</th>
                 </tr>
             </thead>
-        );
-    }
-
-    const renderRow2 = (element, index) => {      
-        return (
-            <tr key={ index }>
-            <th scope="row"><a className="d-inline-block" href='#' onClick={ () => onRowClicked(element, index)}>{ alphabets[index] }</a></th>
-            <td>{ element.name }</td>
-            <td>{ element.type }</td>
-            <td>{ element.required ? 'Kyllä' : 'Ei' }</td>
-            <td>{ element.disabled ? 'Ei' : 'Kyllä' }</td>
-            <td>{ element.readonly ? 'Kyllä' : 'Ei' }</td>
-            <td>{ element.inputmode }</td>
-            </tr>
         );
     }
 
@@ -189,9 +254,17 @@ const Metadata = props => {
 
         return (            
             <tbody>
-                { columns }
+                { columns.slice(0, columnCount) }
             </tbody>
         );
+    }
+
+    const renderSave = props => {
+        if ( metadataChanged ) {
+            return ( <button className="btn btn-outline-primary btn-lg" type="button" onClick={onSave}>Talleta</button> );
+        } else {
+            return ( <button className="btn btn-outline-primary btn-lg" type="button" disabled>Talleta</button> );
+        }
     }
 
     const render = props => {
@@ -205,7 +278,7 @@ const Metadata = props => {
 
                 <div className="input-group my-4">
                     <label className="input-group-text">Sarakkeiden määrä</label>
-                    <select className="form-select" value={ columnCount } onChange={event => setColumnCount(event.target.value)}>
+                    <select className="form-select" value={ columnCount } onChange={onChange}>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -215,29 +288,30 @@ const Metadata = props => {
                         <option value="7">7</option>
                         <option value="8">8</option>
                         <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
                     </select>
                 </div>   
 
                 <div className="d-grid d-md-flex justify-content-md-end">                    
-                    <button className="btn btn-outline-primary btn-lg" type="button" disabled>Talleta</button>
+                    { renderSave(props) }
                 </div>
 
-                <MetadataModal state={ state } column={ row } columnKey={rowIndex} onCancel={onHideModal} onSave={onSaveColumn} />
+                <MetadataModal state={ state } column={ row } columnKey={rowKey} onCancel={onHideModal} onSave={onSaveColumn} />
                 
             </div>
         );      
     }
 
     switch (state) {
-        case 'updateSheet':
-            return render(props);
-        case 'getDeveloperMetadata':
-            return (<></>);
         case 'metadata':
-            return render(props);
-        case 'sheetSelected':
-            return (<></>);
-        case 'sheetChanged':
+        case 'metadataUpdated':
+        case 'metadataChanged':
         case 'showModal':
         case 'hideModal':
             return render(props);
