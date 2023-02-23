@@ -250,7 +250,7 @@ const Metadata = props => {
 
         for (const [key, value] of Object.entries(metadata.columns)) {
             columns.push(renderRow(key, value));
-          }
+        }
 
         return (            
             <tbody>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import Sheets from './Sheets';
 import Metadata from './Metadata';
+import Values from './Values';
 
 
 const Spreadsheet = props => {
@@ -115,7 +116,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } onSave={onSave} />
+                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } />
                     </div>
                     <div className="form-check form-switch my-4">
                         <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled />
@@ -128,6 +129,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
+                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
                     </div>
                 </main>                
             );
