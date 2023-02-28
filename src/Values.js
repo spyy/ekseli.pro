@@ -9,10 +9,13 @@ import ValuesModal from './ValuesModal';
 const Values = props => {
     const [state, setState] = useState('getDeveloperMetadata');
     const [metadata, setMetadata] = useState({});
-    const [row, setRow] = useState({});
-    const [rowIndex, setRowIndex] = useState(-1);
-    const [values, setValues] = useState([]);
+    const [selectedRow, setSelectedRow] = useState({});
+    const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+    const [rows, setRows] = useState([]);
 
+    const [appendRange, setAppendRange] = useState('');
+    const [appendValues, setAppendValues] = useState([]);
+  
   
     useEffect(() => {
         console.log('state: ' + state);
@@ -35,6 +38,17 @@ const Values = props => {
                 getValues();
                 break;
             case 'values':
+                break;
+            case 'update':
+                setState('hideModal');
+                break;
+            case 'append':
+                append();
+                setState('hideModal');
+                break;
+            case 'appendAgain':
+                append();
+                break;
             case 'showModal':
             case 'hideModal':
                 break;            
@@ -44,9 +58,27 @@ const Values = props => {
     },[state]);
 
     const parseBody = res => {
-        console.log(res); 
+        //console.log(res); 
         
         return JSON.parse(res.body);
+    }
+
+    const parseResult = res => {
+        //console.log(res); 
+        
+        return res.result;
+    }
+
+    const parseUpdates = result => {
+        //console.log(result); 
+        
+        return result.updates;
+    }
+
+    const parseUpdatedRange = updates => {
+        //console.log(result); 
+        
+        return updates.updatedRange;
     }
 
     const parsemetadataValue = res => {
@@ -94,7 +126,7 @@ const Values = props => {
     const handleGetValuesResponse = body => {
         console.log(body);
 
-        setValues(body.values);
+        setRows(body.values);
 
         setState('values');
     }
@@ -102,7 +134,7 @@ const Values = props => {
     const handleGetValuesError = err => {
         console.log(err);
 
-        setValues([]);
+        setRows([]);
 
         setState('values');
     }
@@ -122,23 +154,145 @@ const Values = props => {
           .catch(handleGetValuesError)
     }
 
+    const handleUpdateValuesResponse = (body, values, row) => {
+        console.log(body);
+
+        let temp = rows;
+
+        temp[row - 1] = values;
+
+        setRows(temp);
+
+        setState('values');
+    }
+
+    const updateValues = (values, row) => {   
+        const range = props.sheet.properties.title + '!' + row + ':' + row;     
+        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/values/' + range;
+        const args = {
+          'path': path,
+          'method': 'PUT',
+          'params': {
+            'valueInputOption': 'RAW'
+          },
+          'body': {
+            'values': [values]
+          }
+        };
+
+        console.log(path);
+        
+        window.gapi.client.request(args)
+          .then(parseBody)
+          .then(body => handleUpdateValuesResponse(body, values, row))
+          .catch(err => console.log(err))
+    }
+
+    const parseA1Notation = updatedRange => {
+        console.log(updatedRange);
+
+        const splitted = updatedRange.split(':');
+        
+        return splitted[0];
+    }
+
+    const convertA1Notation = range => {
+        console.log(range);
+
+        const re1 = /[A-Z]/i;
+        const re2 = /[A-Z][A-Z]/i;
+        const re3 = /^A[1-9]/i;
+
+        const splitted = range.split('!');
+        const sheetTitle = splitted[0];
+        const rowRange = splitted[1];   
+        
+        if (rowRange.search(re3) == -1) {
+            const replaced = rowRange.replace(re1, 'A');
+            const convertedRange = sheetTitle + '!' + replaced.replace(re2, 'A');
+
+            return {
+                original: range,
+                converted: convertedRange
+            };
+        } else {
+            return {
+                original: range,
+                converted: range
+            };
+        }
+    }
+
+    const updateIfNeeded = range => {
+        if (range.original == range.converted) {
+            setState('getValues');
+        } else {
+            setAppendRange(range.converted);
+
+            setState('appendAgain');
+        }
+    }
+
+    const append = () => {       
+        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/values/' + appendRange + ':append';
+        const args = {
+          'path': path,
+          'method': 'POST',
+          'params': {
+            'valueInputOption': 'RAW'
+          },
+          'body': {
+            'values': [appendValues]
+          }
+        };
+
+        console.log(path);
+        
+        window.gapi.client.request(args)
+          .then(parseResult)
+          .then(parseUpdates)
+          .then(parseUpdatedRange)
+          .then(parseA1Notation)
+          .then(convertA1Notation)
+          .then(updateIfNeeded)
+          .catch(err => console.log(err))
+    }
+
     const onHideModal = () => {
         console.log('onHideModal');
     
         setState('hideModal');
     }
 
-    const onRowClicked = (element, index)  => {
+    const onEdit = (element, index)  => {
         console.log(element);   
         
-        setRow(element);
-        setRowIndex(index);
+        setSelectedRow(element);
+        setSelectedRowIndex(index);
 
         setState('showModal');
     }
 
-    const onSaveRow = (element, index) => {
-        console.log(element);
+    const onSaveRow = (rowValues, rowNumber) => {
+        console.log(rowValues);
+        console.log(rowNumber);
+
+        if (rowNumber) {
+            updateValues(rowValues, rowNumber);
+
+            setState('update');
+        } else {
+            setAppendRange(props.sheet.properties.title);
+            setAppendValues(rowValues);
+            setState('append');
+        }
+    }
+
+    const onAdd = () => {
+        setSelectedRow([]);
+        setSelectedRowIndex(-1);       
+        
+        setState('showModal');
     }
 
     const renderColumn = (element, index) => {      
@@ -178,9 +332,11 @@ const Values = props => {
         const concat = slice.concat(emptyRow);
         const newSlice = concat.slice(0, metadata.columnCount);
 
+
+
         return (
           <tr key={ index }>
-            <th scope="row"><a className="d-inline-block" href='#' onClick={() => onRowClicked(element, index)}>{ index + 1 }</a></th>
+            <th scope="row"><a className="d-inline-block" href='#' onClick={() => onEdit(element, index)}>{ index + 1 }</a></th>
             { 
                 newSlice.map((element, index) => {
                     return renderCell(element, index);
@@ -194,7 +350,7 @@ const Values = props => {
           return (            
               <tbody>
               {
-                values.map((element, index) => {
+                rows.map((element, index) => {
                   return renderRow(element, index);
                 })
               }
@@ -210,13 +366,20 @@ const Values = props => {
                     { renderBody(props) }
                 </table>
 
-                <ValuesModal state={ state } row={ row } rowIndex={rowIndex} columns={metadata.columns} columnCount={metadata.columnCount} onCancel={onHideModal} onSave={onSaveRow} />
+                <div className="d-grid d-md-flex justify-content-md-end">                    
+                    <button className="btn btn-outline-primary btn-lg" type="button" onClick={onAdd}>Lisää rivi</button>
+                </div>
+
+                <ValuesModal state={ state } rowData={ selectedRow } rowNumber={selectedRowIndex + 1} columns={metadata.columns} columnCount={metadata.columnCount} onCancel={onHideModal} onSave={onSaveRow} />
             </div>
         );      
     }
 
     switch (state) {
         case 'values':
+        case 'append':
+        case 'appendAgain':
+        case 'update':
         case 'showModal':
         case 'hideModal':
             return render(props);
