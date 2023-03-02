@@ -58,15 +58,29 @@ const Values = props => {
     },[state]);
 
     const parseBody = res => {
-        //console.log(res); 
+        console.log(res); 
         
         return JSON.parse(res.body);
     }
 
     const parseResult = res => {
-        //console.log(res); 
+        //console.log(res);
+        
+        if(res?.result == undefined) {
+            throw new Error('result not found');
+        }
         
         return res.result;
+    }
+
+    const parseValues = result => {
+        console.log(result); 
+
+        if(result?.values == undefined) {
+            throw new Error('values not found');
+        }
+        
+        return result.values;
     }
 
     const parseUpdates = result => {
@@ -123,10 +137,10 @@ const Values = props => {
           .catch(handleErrorResponse)
     }
 
-    const handleGetValuesResponse = body => {
-        console.log(body);
+    const handleGetValuesResponse = values => {
+        //console.log(body);
 
-        setRows(body.values);
+        setRows(values);
 
         setState('values');
     }
@@ -149,7 +163,8 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseBody)
+          .then(parseResult)
+          .then(parseValues)
           .then(handleGetValuesResponse)
           .catch(handleGetValuesError)
     }
@@ -183,7 +198,7 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseBody)
+          .then(parseResult)
           .then(body => handleUpdateValuesResponse(body, values, row))
           .catch(err => console.log(err))
     }

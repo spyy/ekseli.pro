@@ -6,7 +6,6 @@ import Spreadsheet from './Spreadsheet';
 import NavBar from './NavBar';
 import Header from './Header';
 
-import defaultConfig from './config/default.json';
 
 
 const Blog = props => {
@@ -46,17 +45,6 @@ const Blog = props => {
 
 
   const handleGetFilesResponse = body => {
-    let confs = [];
-
-    body.files.forEach(element => {
-      const obj = Object.assign(defaultConfig, { ref: element });
-      confs.push(obj);
-
-      //console.log(obj);
-    });
-
-    //setConfigs(body.files);
-
     console.log(body.files);
 
     setSpreadsheets(body.files);
@@ -188,7 +176,7 @@ const Blog = props => {
       { renderMain(props) }
 
       <footer className="my-5 pt-5 text-muted text-center text-small">
-        <p className="mb-1">© 2023- ekseli.fi</p>
+        <p className="mb-1">© 2023- ekseli.pro</p>
         <ul className="list-inline">
           <li className="list-inline-item"><a href="#">Privacy</a></li>
           <li className="list-inline-item"><a href="#">Terms</a></li>
