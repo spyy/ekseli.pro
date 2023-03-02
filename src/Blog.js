@@ -4,19 +4,16 @@ import Introduction from './Introduction';
 import Content from './Content';
 import Spreadsheet from './Spreadsheet';
 import NavBar from './NavBar';
+import Header from './Header';
 
-import appConfig from './config/app.json'
-import defaultConfig from './config/default.json'
+import defaultConfig from './config/default.json';
 
 
 const Blog = props => {
   const [spreadsheet, setSpreadsheet] = useState({});
   const [spreadsheets, setSpreadsheets] = useState([]);
   const [state, setState] = useState('loading');
-  const [loginState, setLoginState] = useState('logged out');
   const [firstSelection, setFirstSelection] = useState('');
-
-  let tokenClient;
 
   useEffect(() => {
     console.log('state: ' + state);
@@ -24,15 +21,8 @@ const Blog = props => {
     switch (state) {
       case 'loading':
         break;
-      case 'loaded':
-        window.gapi.load('client', initializeApi);        
-        break;               
-      case 'token':
-        setState('apiInitialized');
-        break;
-      case 'apiInitialized':
-        setState('getFiles');
-        break;
+      case 'introduction':
+          break;               
       case 'getFiles':
         getFiles();
         break;
@@ -49,15 +39,11 @@ const Blog = props => {
         break;
       case 'spreadsheetChanged':
           break;
-      case 'metadataSelected':
-        setState('metadataChanged');
-        break;
-      case 'metadataChanged':
-          break;
       default:
         break;
     }
   },[state]);
+
 
   const handleGetFilesResponse = body => {
     let confs = [];
@@ -120,52 +106,19 @@ const Blog = props => {
       .catch(err => console.log(err))
   }
 
-  const handleTokenResponse = token => {
-    console.log(token);
-
-    setLoginState('logged in');
-
-    setState('token');
+  const onLogin = event => {
+    setState('getFiles');
   }
 
-  const initializeApi= () => {
-    const args = {
-      clientId: appConfig.client_id,
-      apiKey: appConfig.apiKey,
-      scope: appConfig.scope
-    };
-    
-    window.gapi.client.init(args)
-      .then(res => setState('apiInitialized'))
-      .catch(err => console.log(err))
-  
+  const onLogout = event => {
+    setState('introduction');
   }
 
-  const onLoad = event => {
-    setState('loaded');
-  }
+  window.onGoogleLibraryLoad = () => {
+    console.log('onGoogleLibraryLoad');
 
-  window.addEventListener('load', event => onLoad(event));
-
-
-  const onSignIn = () => {
-    tokenClient = window.google.accounts.oauth2.initTokenClient({
-      client_id: appConfig.client_id,
-      scope: appConfig.scope,
-      callback: handleTokenResponse
-    });
-
-    if (window.gapi.client.getToken() === null) {
-      tokenClient.requestAccessToken({prompt: 'consent'});
-    } else {
-      tokenClient.requestAccessToken({prompt: ''});
-    }
-  }
-
-  const onSignOut = () => {
-    console.log('onSignOut');
-
-  }
+    window.gapi.load('client', () => setState('introduction'));
+  };
 
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
@@ -183,21 +136,10 @@ const Blog = props => {
     onSpreadsheet(spreadsheet);
   }
 
-
-  const renderSignInButton = () => {
-    if (loginState == 'logged out') {
-      return (
-        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignIn}>Kirjaudu</a>
-      );
-    } else {
-      return (
-        <a className="btn btn-sm btn-outline-secondary" href="#" onClick={onSignOut}>Ulos</a>
-      );
-    }
-  }
-
   const renderMain = props => {
     switch (state) {
+      case 'introduction':
+        return (<Introduction />);
       case 'content':
         return (
           <Content 
@@ -212,7 +154,7 @@ const Blog = props => {
           <Spreadsheet firstSelection={firstSelection} spreadsheet={ spreadsheet } />
         );
       default:
-          return (<Introduction />);
+        return (<></>);
     }
   }
 
@@ -228,22 +170,14 @@ const Blog = props => {
     }
   }
 
+  const renderHeader = props => {
+    return state == 'loading' ? null : <Header onLogin={ onLogin } onLogout={ onLogout } />;
+  }
+
   return (
     <>
       <div className="container">
-        <header className="blog-header lh-1 py-3">
-          <div className="row flex-nowrap justify-content-between align-items-center">
-            <div className="col-4 pt-1">
-              <a className="link-secondary" href="#" onClick={() => setState('content')}>Alkuun</a>
-            </div>
-            <div className="col-4 text-center">
-              <a className="blog-header-logo text-dark" href="#">Ekseli</a>
-            </div>
-            <div className="col-4 d-flex justify-content-end align-items-center">
-              { renderSignInButton() }
-            </div>        
-          </div>
-        </header>
+        { renderHeader(props) }
         { renderNav(props) }
       </div>
 
