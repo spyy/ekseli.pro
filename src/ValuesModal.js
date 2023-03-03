@@ -95,24 +95,13 @@ const ValuesModal = props => {
     props.onSave(row, props.rowNumber); 
   }
 
-  const renderColumnA = props => {
-    const defaultValue = props.rowData.at(0) ? props.rowData[0] : '';
-
-    return (
-        <div className="form-floating my-3">
-            <input type="text" className="form-control" placeholder={props.columns['A'].name} ref={columnARef} defaultValue={defaultValue} />
-            <label>{props.columns['A'].name}</label>
-        </div>
-    );
-  }
-
   const renderColumn = (props, column, cell, ref) => {
     const defaultValue = props.rowData.at(cell) ? props.rowData[cell] : '';
 
     if (props.columnCount > cell) {
         return (
             <div className="form-floating my-3">
-                <input type="text" className="form-control" placeholder={column.name} ref={ref} defaultValue={defaultValue} />
+                <input type="text" className="form-control" inputMode={column.inputMode} placeholder={column.name} ref={ref} defaultValue={defaultValue} />
                 <label>{column.name}</label>
             </div>
         );        

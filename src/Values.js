@@ -376,10 +376,12 @@ const Values = props => {
     const render = props => {
         return (
             <div className="card-body">
-                <table className="table table-striped caption-top my-4">
-                    { renderHead(props) }
-                    { renderBody(props) }
-                </table>
+                <div className="table-responsive">
+                    <table className="table table-striped caption-top my-4">
+                        { renderHead(props) }
+                        { renderBody(props) }
+                    </table>
+                </div>
 
                 <div className="d-grid d-md-flex justify-content-md-end">                    
                     <button className="btn btn-outline-primary btn-lg" type="button" onClick={onAdd}>Lisää rivi</button>
