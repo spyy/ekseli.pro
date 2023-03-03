@@ -61,47 +61,6 @@ const Spreadsheet = props => {
           .catch(err => console.log(err))
     }
 
-    const handleUpdateResponse = body => {
-        console.log(body);
-    }
-
-    const onSave = metadata => {
-        const sheetId = spreadsheet.sheets[selectedSheet].properties.sheetId;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheet.id + ':batchUpdate';
-        const args = {
-            'path': path,
-            'method': 'POST',
-            'body': {
-                "requests": [{
-                    "updateDeveloperMetadata": {
-                        "fields": "*",
-                        "dataFilters": [{
-                            "developerMetadataLookup": {
-                                "metadataId": sheetId + 1
-                            }
-                        }],
-                        "developerMetadata": {
-                            "metadataKey": "configuration",
-                            "metadataValue": JSON.stringify(metadata),
-                            "location": {
-                                "sheetId": sheetId
-                            },
-                            "visibility": "DOCUMENT"
-                        }
-                    }
-                }]
-            }
-          };
-
-        console.log(path);
-        console.log(args);
-        
-        window.gapi.client.request(args)
-          .then(parseJson)
-          .then(handleUpdateResponse)
-          .catch(err => console.log(err))
-    }
-
     const onSheet = sheet => {
         console.log(sheet);
     
@@ -111,7 +70,7 @@ const Spreadsheet = props => {
     }
 
     const render = props => {
-        if (props.firstSelection == 'metadata') {
+        if (props.firstSelection === 'metadata') {
             return (
                 <main className="container">                  
                     <div className="card border-light">

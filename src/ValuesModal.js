@@ -111,7 +111,7 @@ const ValuesModal = props => {
   }
 
     const renderBody = props => {
-        if (props.state == 'showModal') {
+        if (props.state === 'showModal') {
             return (
                 <div className="modal-body">
                     { renderColumn(props, props.columns['A'], 0, columnARef) }
