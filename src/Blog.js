@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import Introduction from './Introduction';
+import Instructions from './Instructions';
 import Content from './Content';
 import Spreadsheet from './Spreadsheet';
 import NavBar from './NavBar';
@@ -28,6 +29,8 @@ const Blog = props => {
       case 'spreadsheets':
         if (spreadsheets.length) {
           setState('content');
+        } else {
+          setState('instructions');
         }
         break;      
       case 'content':
@@ -43,6 +46,9 @@ const Blog = props => {
     }
   },[state]);
 
+  const filteredSheets = () => {
+    return spreadsheets.filter(element => element.trashed === false);
+  }
 
   const handleGetFilesResponse = body => {
     console.log(body.files);
@@ -132,10 +138,12 @@ const Blog = props => {
     switch (state) {
       case 'introduction':
         return (<Introduction />);
+      case 'instructions':
+        return (<Instructions />);
       case 'content':
         return (
           <Content 
-            spreadsheets={ spreadsheets } 
+            spreadsheets={ filteredSheets() } 
             onMetadata={ spreadsheet => onFirstSelection(spreadsheet, 'metadata') } 
             onSpreadsheet={ spreadsheet => onFirstSelection(spreadsheet, 'spreadsheet') } />
         );
@@ -155,7 +163,7 @@ const Blog = props => {
       case 'spreadsheetSelected':       
       case 'spreadsheetChanged':
         return (
-            <NavBar spreadsheets={ spreadsheets } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
+            <NavBar spreadsheets={ filteredSheets() } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
         );
       default:
           return null;

@@ -101,7 +101,7 @@ const ValuesModal = props => {
     if (props.columnCount > cell) {
         return (
             <div className="form-floating my-3">
-                <input type="text" className="form-control" inputMode={column.inputMode} placeholder={column.name} ref={ref} defaultValue={defaultValue} />
+                <input type="text" className="form-control" inputMode={column.inputmode} placeholder={column.name} ref={ref} defaultValue={defaultValue} />
                 <label>{column.name}</label>
             </div>
         );        

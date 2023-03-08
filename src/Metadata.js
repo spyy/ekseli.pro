@@ -271,10 +271,12 @@ const Metadata = props => {
         return (
             <div className="card-body">
 
-                <table className="table table-striped caption-top my-4">
-                    { renderHead(props) }
-                    { renderBody(props) }
-                </table>
+                <div className="table-responsive">
+                    <table className="table table-striped caption-top my-4">
+                        { renderHead(props) }
+                        { renderBody(props) }
+                    </table>
+                </div>
 
                 <div className="input-group my-4">
                     <label className="input-group-text">Sarakkeiden määrä</label>

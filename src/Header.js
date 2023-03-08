@@ -63,7 +63,7 @@ class Header extends React.Component {
                         <a className="link-primary" href="#" onClick={() => this.props.onBack()}>Alkuun</a>
                     </div>
                     <div className="col-4 text-center">
-                        <a className="blog-header-logo text-dark" href="#">Ekseli Pro</a>
+                        <a className="blog-header-logo text-dark" href="#">EkseliPro</a>
                     </div>
                     <div className="col-4 d-flex justify-content-end align-items-center">
                         <a className="btn btn-sm btn-outline-secondary" href="#" onClick={this.onSignOut}>Ulos</a>   
@@ -80,7 +80,7 @@ class Header extends React.Component {
                     <div className="col-4 pt-1">
                     </div>
                     <div className="col-4 text-center">
-                        <a className="blog-header-logo text-dark" href="#">Ekseli Pro</a>
+                        <a className="blog-header-logo text-dark" href="#">EkseliPro</a>
                     </div>
                     <div className="col-4 d-flex justify-content-end align-items-center">
                         <a className="btn btn-sm btn-outline-secondary" href="#" onClick={this.onSignIn}>Kirjaudu</a>
