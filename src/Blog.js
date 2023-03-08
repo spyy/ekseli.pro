@@ -4,7 +4,7 @@ import Introduction from './Introduction';
 import Instructions from './Instructions';
 import Content from './Content';
 import Spreadsheet from './Spreadsheet';
-import NavBar from './NavBar';
+import Nav from './Nav';
 import Header from './Header';
 
 
@@ -163,7 +163,7 @@ const Blog = props => {
       case 'spreadsheetSelected':       
       case 'spreadsheetChanged':
         return (
-            <NavBar spreadsheets={ filteredSheets() } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
+            <Nav spreadsheets={ filteredSheets() } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
         );
       default:
           return null;

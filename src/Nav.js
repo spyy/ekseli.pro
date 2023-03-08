@@ -1,5 +1,5 @@
 
-const NavBar = props => {
+const Nav = props => {
     const renderTab = (element, index) => {
         console.log(element.id);
         console.log(props.selected);
@@ -28,4 +28,4 @@ const NavBar = props => {
 }
 
 
-export default NavBar;
+export default Nav;
