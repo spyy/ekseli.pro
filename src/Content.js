@@ -6,7 +6,7 @@ const Content = props => {
     const renderMetadataOpen = element => {
         if (element.ownedByMe) {
             return (
-                <a href="#" className="stretched-link" onClick={ () => props.onMetadata(element) }>Avaa</a>
+                <a href="#" className="stretched-link" onClick={ () => props.onSpreadsheet(element) }>Avaa</a>
             );
         } else {
             return null;
@@ -35,50 +35,79 @@ const Content = props => {
         }
     }
 
-    const renderRow = (element, index) => {
-        return (
-            <div key={ parseInt(index) } className="row mb-2">
+    const renderFile = element => {        
+        if (props.activeNavbarItem === 'Google Sheets') {
+            return (            
+                <div className="col p-4 d-flex flex-column position-static">
+                    <strong className="d-inline-block mb-2 text-success">Google Sheet</strong>
+                    <h3 className="mb-0">{ element.name }</h3>
+                    <div className="mb-1 text-muted">{ element.modifiedTime }</div>
+                    <div className="mb-1 text-muted">Viimeksi muokannut { element.lastModifyingUser.displayName }</div>
+                    <p className="card-text mb-4">Tiedoston seliteteksti.</p>
+                    { renderSpreadsheetOpen(element) }
+                </div>                
+            );
+        } else {
+            return (            
+                <div className="col p-4 d-flex flex-column position-static">
+                    <strong className="d-inline-block mb-2 text-primary">Käyttöliittymä konfiguraatio</strong>
+                    <h3 className="mb-0">{ element.name }</h3>
+                    { renderOwned(element) }
+                    <p className="card-text mb-4">Tiedoston seliteteksti.</p>
+                    { renderSpreadsheetOpen(element) }
+                </div>                
+            );
+        }    
+    }
+
+    const renderColumn = element => {        
+        if (element) {
+            return (            
                 <div className="col-md-6">
                     <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                        <div className="col p-4 d-flex flex-column position-static">
-                            <strong className="d-inline-block mb-2 text-primary">Käyttöliittymä</strong>
-                            <h3 className="mb-0">{ element.name }</h3>
-                            { renderOwned(element) }
-                            <p className="card-text mb-auto">Voit konfiguroida omistamasi tiedoston käyttöliittymän.</p>
-                            { renderMetadataOpen(element) }
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                        <div className="col p-4 d-flex flex-column position-static">
-                            <strong className="d-inline-block mb-2 text-success">Google Sheet</strong>
-                            <h3 className="mb-0">{ element.name }</h3>
-                            <div className="mb-1 text-muted">Viimeksi muokannut: { element.modifiedByMeTime }</div>
-                            <p className="mb-auto">Voit muokata omistamiasi ja sinulle jaettuja tiedostoja.</p>
-                            { renderSpreadsheetOpen(element) }
-                        </div>          
+                        { renderFile(element) }        
                     </div>
                 </div>                
+            );
+        } else {
+            return (            
+                <div className="col-md-6">
+                </div>            
+            );
+        }    
+    }
+
+    const renderRow = (row, index) => {
+        return (
+            <div key={ parseInt(index) } className="row">
+                { renderColumn(row.firstColumn) }
+                { renderColumn(row.secondColumn) }
             </div>
         );
     }
 
     const renderSpreadsheets = props => {
-        return props.spreadsheets.map((element, index) => { 
+        let rows = [];
+        let n = 0;
+
+        while (n < props.spreadsheets.length) {
+            rows.push({
+                firstColumn: props.spreadsheets.at(n),
+                secondColumn: props.spreadsheets.at(n + 1)
+            });
+
+            n = n + 2;
+        }        
+
+        return rows.map((element, index) => { 
             return renderRow(element, index);
         });
     }
-
-    const renderInstructions = props => {
-        return (
-            <Instructions />
-        );
-    }
     
     return (
-        <main className="container">            
-            { props.spreadsheets.length ? renderSpreadsheets(props) : renderInstructions(props) }
+        <main className="container"> 
+            <div className="mt-4" />
+            { renderSpreadsheets(props) }                  
         </main>
     );
   }

@@ -70,11 +70,10 @@ const Spreadsheet = props => {
     }
 
     const render = props => {
-        if (props.firstSelection === 'metadata') {
+        if (props.activeNavbarItem === 'Käyttöliittymä') {
             return (
                 <main className="container">                  
                     <div className="card border-light">
-                        <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
                         <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } />
                     </div>
                     <div className="form-check form-switch my-4">
@@ -87,7 +86,6 @@ const Spreadsheet = props => {
             return (
                 <main className="container">                  
                     <div className="card border-light">
-                        <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
                         <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
                     </div>
                 </main>                
