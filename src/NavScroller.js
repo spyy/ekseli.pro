@@ -6,18 +6,20 @@ const NavScroller = props => {
     }
 
     const renderItem = (element, index) => {
-        if (props.active === element) {
+        if (props.spreadsheet.name === element.name) {
             return (
                 <a key={index} className="nav-link active" aria-current="page" href="#">{element.name}</a>
             );
         } else {
             return (
-                <a key={index} className="nav-link" href="#">{element.name}</a>
+                <a key={index} className="nav-link" href="#" onClick={() => props.onItem(element)}>{element.name}</a>
             );
         }
     }
 
     const renderNotSelected = props => {
+        console.log(props.spreadsheet);
+
         if (props.spreadsheet) {
             return null;
         } else {

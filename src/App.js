@@ -16,7 +16,6 @@ const navbarItems = ['Google Sheets', 'Käyttöliittymä', 'Ohje'];
 const App = () => {
   const [state, setState] = useState('loading');
   const [activeNavbarItem, setActiveNavbarItem] = useState('');
-  const [activeNavItem, setActiveNavItem] = useState('');
   const [spreadsheet, setSpreadsheet] = useState(null);
   const [spreadsheets, setSpreadsheets] = useState([]);
 
@@ -54,6 +53,10 @@ const App = () => {
     }
   },[state]);
 
+  const filteredSheets = () => {
+    return spreadsheets.filter(element => element.trashed === false);
+  }
+
   const handleGetFilesResponse = result => {
     console.log(result);
 
@@ -77,7 +80,19 @@ const App = () => {
       .then(handleGetFilesResponse)
       .catch(err => console.log(err))
   }
-  
+
+  const onRefresh = () => {
+    console.log('onRefresh');
+
+    setActiveNavbarItem('');
+
+    setSpreadsheets([]);
+    
+    setSpreadsheet(null);
+
+    setState('get files');
+  }
+
   const onNavbarItem = item => {
     console.log(item);
 
@@ -87,7 +102,9 @@ const App = () => {
   const onNavItem = item => {
     console.log(item);
 
-    setActiveNavItem(item);
+    setSpreadsheet(item);
+
+    setState('spreadsheetSelected');
   }
 
   const onLogin = () => {
@@ -124,7 +141,7 @@ const App = () => {
   const renderNavScroller = () => {
     if (spreadsheet && activeNavbarItem !== 'Ohje') {
       return (
-        <NavScroller activeNavbarItem={activeNavbarItem} spreadsheets={spreadsheets} spreadsheet={spreadsheet} onItem={onNavItem} />
+        <NavScroller activeNavbarItem={activeNavbarItem} spreadsheets={filteredSheets()} spreadsheet={spreadsheet} onItem={onNavItem} />
       );
     } else {
       return null;
@@ -144,13 +161,13 @@ const App = () => {
             return (
               <Content 
                 activeNavbarItem={activeNavbarItem}
-                spreadsheets={spreadsheets} 
-                onSpreadsheet={spreadsheet => onSpreadsheet(spreadsheet)} />
+                spreadsheets={filteredSheets()} 
+                onSpreadsheet={onSpreadsheet} />
             );
           }        
         case 'Ohje':
           return (
-            <Instructions />
+            <Instructions onRefresh={onRefresh} />
           );
         default:
           return (
@@ -160,19 +177,27 @@ const App = () => {
     
   }
 
-  if (state == 'loading') {
-    return (
-      <Loading />
-    );
-  } else {
-    return (
-      <>
-        { renderNavbar() }
-        { renderNavScroller() }
-        { renderMain() }
-      </>
-    );
-  }
+  switch (state) {
+    case 'loading':
+      return (
+        <Loading />
+      );
+    case 'spreadsheetSelected':
+      return (
+        <>
+          { renderNavbar() }
+          { renderNavScroller() }
+        </>
+      );
+    default:
+      return (
+        <>
+          { renderNavbar() }
+          { renderNavScroller() }
+          { renderMain() }
+        </>
+      );
+}
 }
 
 export default App;

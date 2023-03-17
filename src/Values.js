@@ -4,6 +4,8 @@ import sheetDefault from './config/sheet.json'
 
 import ValuesModal from './ValuesModal';
 
+import * as utils from './utils';
+
 
 
 const Values = props => {
@@ -57,50 +59,6 @@ const Values = props => {
         }
     },[state]);
 
-    const parseBody = res => {
-        console.log(res); 
-        
-        return JSON.parse(res.body);
-    }
-
-    const parseResult = res => {
-        //console.log(res);
-        
-        if(res?.result == undefined) {
-            throw new Error('result not found');
-        }
-        
-        return res.result;
-    }
-
-    const parseValues = result => {
-        console.log(result); 
-
-        if(result?.values == undefined) {
-            throw new Error('values not found');
-        }
-        
-        return result.values;
-    }
-
-    const parseUpdates = result => {
-        //console.log(result); 
-        
-        return result.updates;
-    }
-
-    const parseUpdatedRange = updates => {
-        //console.log(result); 
-        
-        return updates.updatedRange;
-    }
-
-    const parsemetadataValue = res => {
-        //console.log(res); 
-        
-        return JSON.parse(res?.metadataValue);
-    }
-
     const handleDeveloperMetadataResponse = metadataValue => {
         console.log('handleResponse');
 
@@ -131,8 +89,8 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseBody)
-          .then(parsemetadataValue)
+          .then(utils.parseBody)
+          .then(utils.parsemetadataValue)
           .then(handleDeveloperMetadataResponse)
           .catch(handleErrorResponse)
     }
@@ -163,8 +121,8 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseResult)
-          .then(parseValues)
+          .then(utils.parseResult)
+          .then(utils.parseValues)
           .then(handleGetValuesResponse)
           .catch(handleGetValuesError)
     }
@@ -198,48 +156,13 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseResult)
+          .then(utils.parseResult)
           .then(body => handleUpdateValuesResponse(body, values, row))
           .catch(err => console.log(err))
     }
 
-    const parseA1Notation = updatedRange => {
-        console.log(updatedRange);
-
-        const splitted = updatedRange.split(':');
-        
-        return splitted[0];
-    }
-
-    const convertA1Notation = range => {
-        console.log(range);
-
-        const re1 = /[A-Z]/i;
-        const re2 = /[A-Z][A-Z]/i;
-        const re3 = /^A[1-9]/i;
-
-        const splitted = range.split('!');
-        const sheetTitle = splitted[0];
-        const rowRange = splitted[1];   
-        
-        if (rowRange.search(re3) == -1) {
-            const replaced = rowRange.replace(re1, 'A');
-            const convertedRange = sheetTitle + '!' + replaced.replace(re2, 'A');
-
-            return {
-                original: range,
-                converted: convertedRange
-            };
-        } else {
-            return {
-                original: range,
-                converted: range
-            };
-        }
-    }
-
     const updateIfNeeded = range => {
-        if (range.original == range.converted) {
+        if (range.original === range.converted) {
             setState('getValues');
         } else {
             setAppendRange(range.converted);
@@ -264,11 +187,11 @@ const Values = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseResult)
-          .then(parseUpdates)
-          .then(parseUpdatedRange)
-          .then(parseA1Notation)
-          .then(convertA1Notation)
+          .then(utils.parseResult)
+          .then(utils.parseUpdates)
+          .then(utils.parseUpdatedRange)
+          .then(utils.parseA1Notation)
+          .then(utils.convertA1Notation)
           .then(updateIfNeeded)
           .catch(err => console.log(err))
     }

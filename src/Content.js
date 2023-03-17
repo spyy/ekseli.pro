@@ -1,17 +1,6 @@
-import Instructions from './Instructions';
 
 
 const Content = props => {
-
-    const renderMetadataOpen = element => {
-        if (element.ownedByMe) {
-            return (
-                <a href="#" className="stretched-link" onClick={ () => props.onSpreadsheet(element) }>Avaa</a>
-            );
-        } else {
-            return null;
-        }
-    }
 
     const renderSpreadsheetOpen = element => {
         if (element.ownedByMe) {
@@ -44,7 +33,7 @@ const Content = props => {
                     <div className="mb-1 text-muted">{ element.modifiedTime }</div>
                     <div className="mb-1 text-muted">Viimeksi muokannut { element.lastModifyingUser.displayName }</div>
                     <p className="card-text mb-4">Tiedoston seliteteksti.</p>
-                    { renderSpreadsheetOpen(element) }
+                    <a href="#" className="" onClick={ () => props.onSpreadsheet(element) }>Avaa</a>
                 </div>                
             );
         } else {
