@@ -39,7 +39,7 @@ const Introduction = props => {
             </div>
     
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
-                <img className="me-3" src="bootstrap-logo-white.svg" alt="" width="48" height="38" />
+                <img className="me-3" src="explicit.svg" alt="" width="48" height="38" />
                 <div className="lh-1">
                     <h1 className="h6 mb-0 text-white lh-1">Ekseli Pro</h1>
                     <small>2023 -</small>
