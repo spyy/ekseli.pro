@@ -10,9 +10,10 @@ const Instructions = props => {
                     <p className="lead my-3">Käy luomassa tiedosto Google Drive:ssa. <a href="https://drive.google.com/drive/" target="_blank" className="text-white fw-bold">Google Drive</a></p>
                 </div>
             </div>
+     
         </main>
     );
-  }
+}
   
   
   export default Instructions;

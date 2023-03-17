@@ -4,6 +4,8 @@ import Sheets from './Sheets';
 import Metadata from './Metadata';
 import Values from './Values';
 
+import * as utils from './utils';
+
 
 const Spreadsheet = props => {
     const [state, setState] = useState('getSpreadsheet');
@@ -30,12 +32,6 @@ const Spreadsheet = props => {
         }
     },[state]);
 
-    const parseJson = res => {
-        //console.log(res); 
-        
-        return JSON.parse(res.body);
-    }
-
     const handleGetSpreadsheetResponse = body => {
         console.log(body);
 
@@ -56,7 +52,7 @@ const Spreadsheet = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseJson)
+          .then(utils.parseJson)
           .then(handleGetSpreadsheetResponse)
           .catch(err => console.log(err))
     }
