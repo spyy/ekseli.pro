@@ -11,22 +11,22 @@ const Spreadsheet = props => {
     const [state, setState] = useState('getSpreadsheet');
     const [spreadsheet, setSpreadsheet] = useState('');
     const [selectedSheet, setSelectedSheet] = useState(0);
-    
-  
+
+
     useEffect(() => {
         console.log('state: ' + state);
-    
-        switch (state) {               
+
+        switch (state) {
             case 'getSpreadsheet':
                 getSpreadsheet();
-                break;               
+                break;
             case 'spreadsheet':
                 break;
             case 'sheetSelected':
                 setState('sheetChanged');
                 break;
             case 'sheetChanged':
-                break;            
+                break;
             default:
                 break;
         }
@@ -50,7 +50,7 @@ const Spreadsheet = props => {
         };
 
         console.log(path);
-        
+
         window.gapi.client.request(args)
           .then(utils.parseJson)
           .then(handleGetSpreadsheetResponse)
@@ -59,36 +59,21 @@ const Spreadsheet = props => {
 
     const onSheet = sheet => {
         console.log(sheet);
-    
-        setState('sheetSelected'); 
-        
+
+        setState('sheetSelected');
+
         setSelectedSheet(sheet.properties.index);
     }
 
     const render = props => {
-        if (props.firstSelection === 'metadata') {
-            return (
-                <main className="container">                  
-                    <div className="card border-light">
-                        <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } />
-                    </div>
-                    <div className="form-check form-switch my-4">
-                        <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled />
-                        <label className="form-check-label">Ensimmäinen rivi määrittää sarakkeiden nimet ja määrän</label>
-                    </div>
-                </main>                
-            );   
-        } else {
-            return (
-                <main className="container">                  
-                    <div className="card border-light">
-                        <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
-                    </div>
-                </main>                
-            );
-        }
+        return (
+            <main className="container">
+                <div className="card border-light">
+                    <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
+                    <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
+                </div>
+            </main>
+        );
     }
 
     switch (state) {

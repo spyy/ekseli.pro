@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
 
+import Header from './Header';
 import Introduction from './Introduction';
 import Instructions from './Instructions';
-import Content from './Content';
-import Spreadsheet from './Spreadsheet';
 import NavScroller from './NavScroller';
-import Header from './Header';
+import Spreadsheet from './Spreadsheet';
+import Content from './Content';
+
+import * as utils from './utils';
 
 
-
-const Blog = props => {
-  const [spreadsheet, setSpreadsheet] = useState({});
+const OffCanvas = props => {
+  const [state, setState] = useState('introduction');
+  const [spreadsheet, setSpreadsheet] = useState(null);
   const [spreadsheets, setSpreadsheets] = useState([]);
-  const [state, setState] = useState('loading');
-  const [firstSelection, setFirstSelection] = useState('');
 
   useEffect(() => {
     console.log('state: ' + state);
 
     switch (state) {
-      case 'loading':
-        break;
       case 'introduction':
-          break;
-      case 'getFiles':
+        break;
+      case 'get files':
         getFiles();
         break;
       case 'spreadsheets':
@@ -50,22 +48,12 @@ const Blog = props => {
     return spreadsheets.filter(element => element.trashed === false);
   }
 
-  const handleGetFilesResponse = body => {
-    console.log(body.files);
+  const handleGetFilesResponse = result => {
+    console.log(result);
 
-    setSpreadsheets(body.files);
+    setSpreadsheets(result.files);
 
     setState('spreadsheets');
-  }
-
-  const handleGetConfigsResponse = body => {
-    setState('configs');
-  }
-
-  const parseJson = res => {
-    //console.log(res);
-
-    return JSON.parse(res.body);
   }
 
   const getFiles = () => {
@@ -79,44 +67,37 @@ const Blog = props => {
     };
 
     window.gapi.client.request(args)
-      .then(parseJson)
+      .then(utils.parseResult)
       .then(handleGetFilesResponse)
       .catch(err => console.log(err))
   }
 
-  const getConfigs = () => {
-    const args = {
-      'path': 'https://www.googleapis.com/drive/v3/files',
-      'params': {
-        'spaces': 'appDataFolder',
-        'fields': '*',
-        'q': 'mimeType = "application/json"'
-      }
-    };
+  const clear = () => {
+    console.log('clear');
 
-    window.gapi.client.request(args)
-      .then(parseJson)
-      .then(handleGetConfigsResponse)
-      .catch(err => console.log(err))
+    setSpreadsheets([]);
+
+    setSpreadsheet(null);
+
   }
 
-  const onLogin = event => {
-    setState('getFiles');
+  const onLogin = () => {
+    console.log('onLogin');
+
+    setState('get files');
   }
 
-  const onLogout = event => {
+  const onLogout = () => {
+    console.log('onLogout');
+
+    clear();
+
     setState('introduction');
   }
 
   const onBack = event => {
     setState('content');
   }
-
-  window.onGoogleLibraryLoad = () => {
-    console.log('onGoogleLibraryLoad');
-
-    window.gapi.load('client', () => setState('introduction'));
-  };
 
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
@@ -126,13 +107,6 @@ const Blog = props => {
     setSpreadsheet(spreadsheet);
   }
 
-  const onFirstSelection = (spreadsheet, selection) => {
-    console.log('onFirstSelection');
-
-    setFirstSelection(selection);
-
-    onSpreadsheet(spreadsheet);
-  }
 
   const renderMain = props => {
     switch (state) {
@@ -144,14 +118,13 @@ const Blog = props => {
         return (
           <Content
             spreadsheets={ filteredSheets() }
-            onMetadata={ spreadsheet => onFirstSelection(spreadsheet, 'metadata') }
-            onSpreadsheet={ spreadsheet => onFirstSelection(spreadsheet, 'spreadsheet') } />
+            onSpreadsheet={ onSpreadsheet } />
         );
       case 'spreadsheetSelected':
         return (<></>);
       case 'spreadsheetChanged':
         return (
-          <Spreadsheet firstSelection={firstSelection} spreadsheet={ spreadsheet } />
+          <Spreadsheet spreadsheet={ spreadsheet } />
         );
       default:
         return (<></>);
@@ -170,14 +143,10 @@ const Blog = props => {
     }
   }
 
-  const renderHeader = props => {
-    return state == 'loading' ? null : <Header onLogin={ onLogin } onLogout={ onLogout } onBack={ onBack } />;
-  }
-
   return (
     <>
       <div className="container">
-        { renderHeader(props) }
+        <Header onLogin={ onLogin } onLogout={ onLogout } onBack={ onBack } />
         { renderNav(props) }
       </div>
 
