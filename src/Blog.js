@@ -4,7 +4,7 @@ import Introduction from './Introduction';
 import Instructions from './Instructions';
 import Content from './Content';
 import Spreadsheet from './Spreadsheet';
-import Nav from './Nav';
+import NavScroller from './NavScroller';
 import Header from './Header';
 
 
@@ -22,7 +22,7 @@ const Blog = props => {
       case 'loading':
         break;
       case 'introduction':
-          break;               
+          break;
       case 'getFiles':
         getFiles();
         break;
@@ -32,7 +32,7 @@ const Blog = props => {
         } else {
           setState('instructions');
         }
-        break;      
+        break;
       case 'content':
         setSpreadsheet('');
         break;
@@ -63,8 +63,8 @@ const Blog = props => {
   }
 
   const parseJson = res => {
-    //console.log(res); 
-    
+    //console.log(res);
+
     return JSON.parse(res.body);
   }
 
@@ -77,7 +77,7 @@ const Blog = props => {
         'q': 'mimeType = "application/vnd.google-apps.spreadsheet"'
       }
     };
-    
+
     window.gapi.client.request(args)
       .then(parseJson)
       .then(handleGetFilesResponse)
@@ -93,7 +93,7 @@ const Blog = props => {
         'q': 'mimeType = "application/json"'
       }
     };
-    
+
     window.gapi.client.request(args)
       .then(parseJson)
       .then(handleGetConfigsResponse)
@@ -121,15 +121,15 @@ const Blog = props => {
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
 
-    setState('spreadsheetSelected'); 
-    
+    setState('spreadsheetSelected');
+
     setSpreadsheet(spreadsheet);
   }
 
   const onFirstSelection = (spreadsheet, selection) => {
     console.log('onFirstSelection');
 
-    setFirstSelection(selection); 
+    setFirstSelection(selection);
 
     onSpreadsheet(spreadsheet);
   }
@@ -142,12 +142,12 @@ const Blog = props => {
         return (<Instructions />);
       case 'content':
         return (
-          <Content 
-            spreadsheets={ filteredSheets() } 
-            onMetadata={ spreadsheet => onFirstSelection(spreadsheet, 'metadata') } 
+          <Content
+            spreadsheets={ filteredSheets() }
+            onMetadata={ spreadsheet => onFirstSelection(spreadsheet, 'metadata') }
             onSpreadsheet={ spreadsheet => onFirstSelection(spreadsheet, 'spreadsheet') } />
         );
-      case 'spreadsheetSelected':        
+      case 'spreadsheetSelected':
         return (<></>);
       case 'spreadsheetChanged':
         return (
@@ -160,10 +160,10 @@ const Blog = props => {
 
   const renderNav = props => {
     switch (state) {
-      case 'spreadsheetSelected':       
+      case 'spreadsheetSelected':
       case 'spreadsheetChanged':
         return (
-            <Nav spreadsheets={ filteredSheets() } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
+            <NavScroller spreadsheets={ filteredSheets() } selected={ spreadsheet } onSpreadsheet={ onSpreadsheet } />
         );
       default:
           return null;

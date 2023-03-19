@@ -1,5 +1,5 @@
 
-const Nav = props => {
+const NavScroller = props => {
     const renderTab = (element, index) => {
         console.log(element.id);
         console.log(props.selected);
@@ -13,19 +13,19 @@ const Nav = props => {
             );
         }
     }
-    
+
     return (
         <div className="nav-scroller py-1 mb-2">
             <nav className="nav d-flex justify-content-center">
-            { 
-                props.spreadsheets.map((element, index) => { 
+            {
+                props.spreadsheets.map((element, index) => {
                     return renderTab(element, index);
-                }) 
+                })
             }
             </nav>
-        </div>            
+        </div>
     );
 }
 
 
-export default Nav;
+export default NavScroller;
