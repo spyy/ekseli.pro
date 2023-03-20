@@ -44,6 +44,8 @@ class Navbar extends React.Component {
         } else {
             this.tokenClient.requestAccessToken({prompt: ''});
         }
+
+        document.querySelector('.offcanvas-collapse').classList.toggle('open');
     }
 
     onSignOut = () => {
@@ -52,10 +54,20 @@ class Navbar extends React.Component {
         });
 
         this.props.onLogout();
+
+        document.querySelector('.offcanvas-collapse').classList.toggle('open');
     }
 
     onClick = () => {
         console.log('onClick');
+
+        document.querySelector('.offcanvas-collapse').classList.toggle('open');
+    }
+
+    onItem = element => {
+        console.log('onClick');        
+
+        this.props.onItem(element);
 
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
     }
@@ -70,7 +82,7 @@ class Navbar extends React.Component {
         } else {
             return (
                 <li className="nav-item" key={index}>
-                    <a className="nav-link" href="#" onClick={() => this.props.onItem(element)}>{element}</a>
+                    <a className="nav-link" href="#" onClick={() => this.onItem(element)}>{element}</a>
                 </li>
             );
         }
