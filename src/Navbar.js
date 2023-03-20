@@ -27,9 +27,7 @@ class Navbar extends React.Component {
     handleTokenResponse = tokenResponse => {
         console.log(tokenResponse);
     
-        if (tokenResponse && tokenResponse.access_token) {
-            window.gapi.client.setApiKey(appConfig.apiKey);
-    
+        if (tokenResponse && tokenResponse.access_token) {    
             this.setState({
                 loggedin: true
             });
