@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-//import Blog from './Blog';
+import TokenExpired from './TokenExpired';
 import Navbar from './Navbar';
 import Introduction from './Introduction';
 import Instructions from './Instructions';
 import NavScroller from './NavScroller';
 import Spreadsheet from './Spreadsheet';
 import Content from './Content';
+import Loading from './Loading';
+
 
 import * as utils from './utils';
 
@@ -39,6 +41,8 @@ const OffCanvas = props => {
         break;
       case 'spreadsheetChanged':
           break;
+      case 'token expired':
+        break;
       default:
         break;
     }
@@ -125,14 +129,19 @@ const OffCanvas = props => {
 
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
-
     
     setSpreadsheet(spreadsheet);
   }
 
+  const onTokenExpired = () => {
+    clear();
+    
+    setState('token expired');
+  }
+
   const renderNavbar = () => {    
     return (
-      <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onLogin={onLogin} onLogout={onLogout} />
+      <Navbar items={navbarItems} active={activeNavbarItem} state={state} onItem={onNavbarItem} onLogin={onLogin} onLogout={onLogout} />
     );   
   }
 
@@ -146,14 +155,13 @@ const OffCanvas = props => {
     }   
   }
 
-  const renderMain = () => {    
-    
+  const renderMain = () => {        
       switch (activeNavbarItem) {
         case 'Google Sheets':
         case 'Käyttöliittymä':
           if (spreadsheet) {
             return (
-              <Spreadsheet activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } />
+              <Spreadsheet activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } onTokenExpired={ onTokenExpired } />
             );
           } else {
             return (
@@ -171,16 +179,29 @@ const OffCanvas = props => {
           return (
             <Introduction />
           );
-      }
-    
+      }    
   }
 
   switch (state) {
+    case 'get files':
+      return (
+        <>
+          { renderNavbar() }
+          <Loading />
+        </>
+      );
     case 'spreadsheetSelected':
       return (
         <>
           { renderNavbar() }
           { renderNavScroller() }
+        </>
+      );
+    case 'token expired':
+      return (
+        <>
+          { renderNavbar() }
+          <TokenExpired />
         </>
       );
     default:
@@ -191,7 +212,7 @@ const OffCanvas = props => {
           { renderMain() }
         </>
       );
-}
+  }
 }
 
 export default OffCanvas;

@@ -1,10 +1,10 @@
 
-function Loading(props) {
+function TokenExpired(props) {
     return (
         <main className="container">
             <div className="d-flex vh-100 align-items-center justify-content-center">
-                <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Lataa...</span>
+                <div className="alert alert-primary" role="alert">
+                    Aika umpeutui, kirjaudu uudelleen!
                 </div>
             </div>
         </main>
@@ -12,4 +12,4 @@ function Loading(props) {
   }
   
   
-  export default Loading;
+  export default TokenExpired;

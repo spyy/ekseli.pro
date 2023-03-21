@@ -6,10 +6,8 @@ import appConfig from './config/app.json';
 class Navbar extends React.Component {
     constructor(props) {
         super(props);
+
         this.tokenClient = null;
-        this.state = {
-            loggedin: false
-        };
     }
 
     componentDidMount() {
@@ -28,10 +26,6 @@ class Navbar extends React.Component {
         console.log(tokenResponse);
     
         if (tokenResponse && tokenResponse.access_token) {    
-            this.setState({
-                loggedin: true
-            });
-
             this.props.onLogin();
         }
     }
@@ -47,10 +41,6 @@ class Navbar extends React.Component {
     }
 
     onSignOut = () => {
-        this.setState({
-            loggedin: false
-        });
-
         this.props.onLogout();
 
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
@@ -87,14 +77,18 @@ class Navbar extends React.Component {
     }
 
     renderButton = () => {
-        if (this.state.loggedin) {
-            return (            
-                <button className="btn btn-outline-success" type="button" onClick={this.onSignOut}>Kirjaudu ulos</button>
-            );
-        } else {
-            return (
-                <button className="btn btn-outline-success" type="button" onClick={this.onSignIn}>Kirjaudu sisään</button>
-            );           
+        console.log('renderButton: ' + this.props.state);
+        
+        switch (this.props.state) {
+            case 'introduction':
+            case 'token expired':
+                return (
+                    <button className="btn btn-outline-success" type="button" onClick={this.onSignIn}>Kirjaudu sisään</button>
+                );
+            default:
+                return (            
+                    <button className="btn btn-outline-success" type="button" onClick={this.onSignOut}>Kirjaudu ulos</button>
+                );
         }
     }
   

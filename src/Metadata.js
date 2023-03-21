@@ -68,8 +68,12 @@ const Metadata = props => {
 
     const handleErrorResponse = err => {
         console.log(err);
-
-        setState('metadataNotFound');
+        
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setState('metadataNotFound');
+        }
     }
 
     const getDeveloperMetadata = () => {
@@ -122,7 +126,7 @@ const Metadata = props => {
         window.gapi.client.request(args)
           .then(utils.parseBody)
           .then(handleUpdateResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const updateDeveloperMetadata = () => {
@@ -158,7 +162,7 @@ const Metadata = props => {
         window.gapi.client.request(args)
           .then(utils.parseBody)
           .then(handleUpdateResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const onSave = () => {

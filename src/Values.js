@@ -76,7 +76,11 @@ const Values = props => {
     const handleErrorResponse = err => {
         console.log(err);
 
-        setState('metadataNotFound');
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setState('metadataNotFound');
+        }
     }
 
     const getDeveloperMetadata = () => {
@@ -106,9 +110,12 @@ const Values = props => {
     const handleGetValuesError = err => {
         console.log(err);
 
-        setRows([]);
-
-        setState('values');
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setRows([]);
+            setState('values');
+        }
     }
 
     const getValues = () => {    
@@ -158,7 +165,7 @@ const Values = props => {
         window.gapi.client.request(args)
           .then(utils.parseResult)
           .then(body => handleUpdateValuesResponse(body, values, row))
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const updateIfNeeded = range => {
@@ -193,7 +200,7 @@ const Values = props => {
           .then(utils.parseA1Notation)
           .then(utils.convertA1Notation)
           .then(updateIfNeeded)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const onHideModal = () => {

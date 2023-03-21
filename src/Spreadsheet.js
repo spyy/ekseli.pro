@@ -54,7 +54,7 @@ const Spreadsheet = props => {
         window.gapi.client.request(args)
           .then(utils.parseJson)
           .then(handleGetSpreadsheetResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const onSheet = sheet => {
@@ -71,7 +71,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } />
+                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } onTokenExpired={ props.onTokenExpired } />
                     </div>
                     <div className="form-check form-switch my-4">
                         <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled />
@@ -84,7 +84,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
+                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } onTokenExpired={ props.onTokenExpired } />
                     </div>
                 </main>                
             );
