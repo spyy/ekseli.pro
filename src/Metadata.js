@@ -4,6 +4,8 @@ import sheetDefault from './config/sheet.json'
 
 import MetadataModal from './MetadataModal';
 
+import * as utils from './utils';
+
 
 
 const Metadata = props => {
@@ -49,18 +51,6 @@ const Metadata = props => {
         }
     },[state]);
 
-    const parseBody = res => {
-        //console.log(res); 
-        
-        return JSON.parse(res?.body);
-    }
-
-    const parsemetadataValue = res => {
-        //console.log(res); 
-        
-        return JSON.parse(res?.metadataValue);
-    }
-
     const handleResponse = metadataValue => {
         console.log('handleResponse');
 
@@ -78,8 +68,12 @@ const Metadata = props => {
 
     const handleErrorResponse = err => {
         console.log(err);
-
-        setState('metadataNotFound');
+        
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setState('metadataNotFound');
+        }
     }
 
     const getDeveloperMetadata = () => {
@@ -92,8 +86,8 @@ const Metadata = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseBody)
-          .then(parsemetadataValue)
+          .then(utils.parseBody)
+          .then(utils.parsemetadataValue)
           .then(handleResponse)
           .catch(handleErrorResponse)
     }
@@ -130,9 +124,9 @@ const Metadata = props => {
         console.log(args);
         
         window.gapi.client.request(args)
-          .then(parseBody)
+          .then(utils.parseBody)
           .then(handleUpdateResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const updateDeveloperMetadata = () => {
@@ -166,9 +160,9 @@ const Metadata = props => {
         console.log(args);
         
         window.gapi.client.request(args)
-          .then(parseBody)
+          .then(utils.parseBody)
           .then(handleUpdateResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const onSave = () => {

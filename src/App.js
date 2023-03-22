@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
 
-import Blog from './Blog';
-import Introduction from './Introduction';
+import Loading from './Loading';
+import OffCanvas from './OffCanvas';
 
 
+const App = () => {
+  const [state, setState] = useState('loading');
 
-function App() {
-  const [screenState, setScreenState] = useState('blog');
-  
+  window.onGoogleLibraryLoad = () => {
+    console.log('onGoogleLibraryLoad');
 
-  switch (screenState) {
-    case 'dashboard':
-      break;
-    case 'blog':
-    default:
+    window.gapi.load('client', () => setState('api loaded'));
+  };
+
+  switch (state) {
+    case 'loading':
       return (
-        <Blog />
+        <Loading />
       );
-  }
+    default:
+      return (       
+        <OffCanvas />
+      );
+}
 }
 
 export default App;

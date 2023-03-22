@@ -4,6 +4,8 @@ import Sheets from './Sheets';
 import Metadata from './Metadata';
 import Values from './Values';
 
+import * as utils from './utils';
+
 
 const Spreadsheet = props => {
     const [state, setState] = useState('getSpreadsheet');
@@ -30,12 +32,6 @@ const Spreadsheet = props => {
         }
     },[state]);
 
-    const parseJson = res => {
-        //console.log(res); 
-        
-        return JSON.parse(res.body);
-    }
-
     const handleGetSpreadsheetResponse = body => {
         console.log(body);
 
@@ -56,9 +52,9 @@ const Spreadsheet = props => {
         console.log(path);
         
         window.gapi.client.request(args)
-          .then(parseJson)
+          .then(utils.parseJson)
           .then(handleGetSpreadsheetResponse)
-          .catch(err => console.log(err))
+          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
     const onSheet = sheet => {
@@ -70,12 +66,12 @@ const Spreadsheet = props => {
     }
 
     const render = props => {
-        if (props.firstSelection === 'metadata') {
+        if (props.activeNavbarItem === 'Käyttöliittymä') {
             return (
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } />
+                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } onTokenExpired={ props.onTokenExpired } />
                     </div>
                     <div className="form-check form-switch my-4">
                         <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled />
@@ -88,7 +84,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } />
+                        <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } onTokenExpired={ props.onTokenExpired } />
                     </div>
                 </main>                
             );
