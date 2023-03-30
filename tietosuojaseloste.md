@@ -1,4 +1,4 @@
-# Ekseli Pro
+# Ekseli Pro tietosuojaseloste
 
 Sovellus ei kerää käyttäjiltä tietoja.
 
