@@ -1,2 +1,0 @@
-# ekseli
-Hobby repo
