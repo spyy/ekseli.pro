@@ -1,4 +1,4 @@
-# Ekseli Pro
+# Ekseli Pro esittely
 
 ## Avoimen lähdekoodin projekti joka tarjoaa mobiilikäyttöliittymän pilvessä oleviin Excel tiedostoihisi
 
