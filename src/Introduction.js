@@ -14,8 +14,7 @@ const Introduction = props => {
                 <div className="lh-1">
                     <p className="lead my-3">Ekseli Pro on vapaasti käytettävä ohjelma, joka hyödyntää Googlen tarjoamaa ilmaista Drive palvelua.</p>
                     <p className="lead my-3">Voit laittaa levyn nurkallasi olevat Excel tiedostosi Googlen pilveen ja käyttää niitä mobiilisti.</p>
-                    <p className="lead my-3">Voit myös säätää jokaiselle tiedostolle omanlaisensa käyttöliittymän.</p>
-                    <p className="lead my-3">Tällä hetkellä voit säätää kenttien määrän, niiden nimet ja minkälaista syötettä ne ottavat vastaan.</p>
+                    <p className="lead my-3">Voit myös itse säätää jokaiselle tiedostolle kenttien määrän, niiden nimet ja minkälaista syötettä ne ottavat vastaan.</p>
                     <p className="lead my-3">Ohjelma tarvitsee Google Drive käyttöoikeuden. <a href="https://www.google.com/drive/" target="_blank" className="text-white fw-bold">Google Drive</a></p>
                 </div>
             </div>
