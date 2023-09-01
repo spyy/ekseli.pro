@@ -1,4 +1,4 @@
-# ekseli.pro palveluehdot
+# Palveluehdot
 
 Sovellus ei vastaa käyttäjän tietojen säilytyksestä.
 
