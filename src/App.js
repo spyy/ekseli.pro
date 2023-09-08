@@ -10,6 +10,12 @@ const App = () => {
   window.onGoogleLibraryLoad = () => {
     console.log('onGoogleLibraryLoad');
 
+    //window.gapi.load('client', () => setState('api loaded'));
+  };
+
+  window.onload = event => {
+    console.log("page is fully loaded");
+
     window.gapi.load('client', () => setState('api loaded'));
   };
 
