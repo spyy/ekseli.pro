@@ -1,67 +1,34 @@
 import React from 'react';
 
-import appConfig from './config/app.json';
 
+const Navbar = props => {
 
-class Navbar extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.tokenClient = null;
-    }
-
-    componentDidMount() {
-        this.tokenClient = window.google.accounts.oauth2.initTokenClient({
-            client_id: appConfig.client_id,
-            scope: appConfig.scope,
-            callback: this.handleTokenResponse
-        });        
-      }
-    
-    componentWillUnmount() {
-        console.log('componentWillUnmount');
-    }
-
-    handleTokenResponse = tokenResponse => {
-        console.log(tokenResponse);
-    
-        if (tokenResponse && tokenResponse.access_token) {    
-            this.props.onLogin();
-        }
-    }
-
-    onSignIn = () => {
-        if (window.gapi.client.getToken() === null) {
-            this.tokenClient.requestAccessToken({prompt: 'consent'});
-        } else {
-            this.tokenClient.requestAccessToken({prompt: ''});
-        }
-
+    const onSignIn = () => {
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
+
+        props.onSignIn();
     }
 
-    onSignOut = () => {
-        this.props.onLogout();
-
+    const onSignOut = () => {
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
+
+        props.onSignOut();
     }
 
-    onClick = () => {
+    const onClick = () => {
         console.log('onClick');
 
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
     }
 
-    onItem = element => {
-        console.log('onClick');        
-
-        this.props.onItem(element);
-
+    const onItem = element => {
         document.querySelector('.offcanvas-collapse').classList.toggle('open');
+
+        props.onItem(element);
     }
 
-    renderItem = (element, index) => {
-        if (this.props.active === element) {
+    const renderItem = (element, index) => {
+        if (props.active === element) {
             return (
                 <li className="nav-item" key={index}>
                     <a className="nav-link active" aria-current="page" href="#">{element}</a>
@@ -70,51 +37,55 @@ class Navbar extends React.Component {
         } else {
             return (
                 <li className="nav-item" key={index}>
-                    <a className="nav-link" href="#" onClick={() => this.onItem(element)}>{element}</a>
+                    <a className="nav-link" href="#" onClick={() => onItem(element)}>{element}</a>
                 </li>
             );
         }
     }
+    
+    const renderLoginButton = props => {
+        if (props.onSignIn) {
+            return (
+                <button className="btn btn-outline-success" type="button" onClick={onSignIn}>Kirjaudu sisään</button>
+            );
+        } else {
+            return null;
+        }        
+    }
 
-    renderButton = () => {
-        console.log('renderButton: ' + this.props.state);
-        
-        switch (this.props.state) {
-            case 'introduction':
-            case 'token expired':
-                return (
-                    <button className="btn btn-outline-success" type="button" onClick={this.onSignIn}>Kirjaudu sisään</button>
-                );
-            default:
-                return (            
-                    <button className="btn btn-outline-success" type="button" onClick={this.onSignOut}>Kirjaudu ulos</button>
-                );
-        }
+    const renderLogoutButton = props => {
+        if (props.onSignOut) {
+            return (
+                <button className="btn btn-outline-success" type="button" onClick={onSignOut}>Kirjaudu ulos</button>
+            );
+        } else {
+            return null;
+        }        
     }
   
-    render() {
-        return (
-            <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
-                <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Ekseli Pro</a>
-                    <button className="navbar-toggler p-0 border-0" type="button" aria-label="Toggle navigation" onClick={this.onClick}>
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
     
-                    <div className="navbar-collapse offcanvas-collapse">
-                        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                            {
-                                this.props.items.map((element, index) => this.renderItem(element, index))
-                            }
-                        </ul>
-                        <form className="d-flex">
-                            {this.renderButton()}
-                        </form>
-                    </div>
+    return (
+        <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="#">Ekseli Pro</a>
+                <button className="navbar-toggler p-0 border-0" type="button" aria-label="Toggle navigation" onClick={onClick}>
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+
+                <div className="navbar-collapse offcanvas-collapse">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        {
+                            props.items.map((element, index) => renderItem(element, index))
+                        }
+                    </ul>
+                    <form className="d-flex">
+                        { renderLoginButton(props) }
+                        { renderLogoutButton(props) }
+                    </form>
                 </div>
-            </nav>
-        );
-    }
+            </div>
+        </nav>
+    );
 }
 
 

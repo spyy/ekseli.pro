@@ -28,12 +28,27 @@ const Content = props => {
         if (props.activeNavbarItem === 'Google Sheets') {
             return (            
                 <div className="col p-4 d-flex flex-column position-static">
-                    <strong className="d-inline-block mb-2 text-success">Google Sheet</strong>
+                    <strong className="d-inline-block mb-2 text-success">Google Spreadsheet</strong>
                     <h3 className="mb-0">{ element.name }</h3>
                     <div className="mb-1 text-muted">{ element.modifiedTime }</div>
                     <div className="mb-1 text-muted">Viimeksi muokannut { element.lastModifyingUser.displayName }</div>
-                    <p className="card-text mb-4">Tiedoston seliteteksti.</p>
-                    <a href="#" className="" onClick={ () => props.onSpreadsheet(element) }>Avaa</a>
+                    <p></p>                    
+                    <div>
+                        <div className="float-start">
+                            <a href="#" className="icon-link text-decoration-none" onClick={ () => props.onSpreadsheet(element) }>
+                            Haku <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                            </a>                            
+                        </div>
+                        <div className="float-end">
+                            <a href="#" className="icon-link text-decoration-none" onClick={ () => props.onSpreadsheet(element) }>
+                            Lisää rivi <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                            </svg>
+                            </a>                                                            
+                        </div>
+                    </div>                                                                
                 </div>                
             );
         } else {

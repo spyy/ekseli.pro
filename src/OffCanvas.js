@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import TokenExpired from './TokenExpired';
 import Navbar from './Navbar';
-import Introduction from './Introduction';
 import Instructions from './Instructions';
-import NavScroller from './NavScroller';
 import Spreadsheet from './Spreadsheet';
 import Content from './Content';
 import Loading from './Loading';
@@ -15,7 +13,7 @@ import * as utils from './utils';
 const navbarItems = ['Google Sheets', 'Käyttöliittymä', 'Ohje'];
 
 const OffCanvas = props => {
-  const [state, setState] = useState('introduction');
+  const [state, setState] = useState('get files');
   const [activeNavbarItem, setActiveNavbarItem] = useState('');
   const [spreadsheet, setSpreadsheet] = useState(null);
   const [spreadsheets, setSpreadsheets] = useState([]);
@@ -24,8 +22,6 @@ const OffCanvas = props => {
     console.log('state: ' + state);
 
     switch (state) {
-      case 'introduction':
-        break;
       case 'get files':
         getFiles();
         break;
@@ -99,38 +95,20 @@ const OffCanvas = props => {
     }
   }
 
-  const onLogin = () => {
-    console.log('onLogin');
-
-    setState('get files');
-  }
-
-  const onLogout = () => {
-    console.log('onLogout');
-
-    clear();
-
-    setState('introduction');
-  }
-
   const onNavbarItem = item => {
     console.log(item);
 
     setActiveNavbarItem(item);
-  }
 
-  const onNavItem = item => {
-    console.log(item);
-
-    setSpreadsheet(item);
-
-    setState('spreadsheetSelected');
+    setSpreadsheet(null);
   }
 
   const onSpreadsheet = spreadsheet => {
     console.log(spreadsheet);
-    
+
     setSpreadsheet(spreadsheet);
+
+    setState('spreadsheetSelected');
   }
 
   const onTokenExpired = () => {
@@ -139,23 +117,9 @@ const OffCanvas = props => {
     setState('token expired');
   }
 
-  const renderNavbar = () => {    
-    return (
-      <Navbar items={navbarItems} active={activeNavbarItem} state={state} onItem={onNavbarItem} onLogin={onLogin} onLogout={onLogout} />
-    );   
-  }
+  const renderMain = () => {      
+      console.log(activeNavbarItem);  
 
-  const renderNavScroller = () => {
-    if (spreadsheet && activeNavbarItem !== 'Ohje') {
-      return (
-        <NavScroller activeNavbarItem={activeNavbarItem} spreadsheets={filteredSheets()} spreadsheet={spreadsheet} onItem={onNavItem} />
-      );
-    } else {
-      return null;
-    }   
-  }
-
-  const renderMain = () => {        
       switch (activeNavbarItem) {
         case 'Google Sheets':
         case 'Käyttöliittymä':
@@ -176,39 +140,29 @@ const OffCanvas = props => {
             <Instructions onRefresh={onRefresh} />
           );
         default:
-          return (
-            <Introduction />
-          );
+          return (null);
       }    
   }
 
   switch (state) {
     case 'get files':
-      return (
-        <>
-          { renderNavbar() }
-          <Loading />
-        </>
-      );
     case 'spreadsheetSelected':
       return (
         <>
-          { renderNavbar() }
-          { renderNavScroller() }
+          <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
+          <Loading />
         </>
       );
     case 'token expired':
       return (
         <>
-          { renderNavbar() }
           <TokenExpired />
         </>
       );
     default:
       return (
-        <>
-          { renderNavbar() }
-          { renderNavScroller() }
+        <>          
+          <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
           { renderMain() }
         </>
       );
