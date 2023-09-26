@@ -6,16 +6,16 @@ const Introduction = props => {
       
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <div className="lh-1">
-                    <h2 className="display-4 fst-italic">Google Sheets tiedostosi mobiilisti</h2>
+                    <h2 className="display-4 fst-italic">Spreadsheet tiedostosi mobiilisti</h2>
                 </div>
             </div>
     
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <div className="lh-1">
-                    <p className="lead my-3">Ekseli Pro on vapaasti käytettävä ohjelma, joka hyödyntää Googlen tarjoamaa ilmaista Drive palvelua.</p>
+                    <p className="lead my-3">ekseli.pro on vapaasti käytettävä ohjelma, joka hyödyntää Googlen tarjoamaa ilmaista Drive palvelua.</p>
                     <p className="lead my-3">Voit laittaa levyn nurkallasi olevat Excel tiedostosi Googlen pilveen ja käyttää niitä mobiilisti.</p>
                     <p className="lead my-3">Voit myös itse säätää jokaiselle tiedostolle kenttien määrän, niiden nimet ja minkälaista syötettä ne ottavat vastaan.</p>
-                    <p className="lead my-3">Ohjelma tarvitsee Google Drive käyttöoikeuden. <a href="https://www.google.com/drive/" target="_blank" className="text-white fw-bold">Google Drive</a></p>
+                    <p className="lead my-3">Tarvitset Google tunnukset kirjautumiseen. <a href="#" className="text-white fw-bold" onClick={() => props.onSignIn()}>Kirjaudu sisään</a></p>
                 </div>
             </div>
     
@@ -47,7 +47,7 @@ const Introduction = props => {
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <img className="me-3" src="explicit.svg" alt="" width="48" height="38" />
                 <div className="lh-1">
-                    <h1 className="h6 mb-0 text-white lh-1">Ekseli Pro</h1>
+                    <h1 className="h6 mb-0 text-white lh-1">ekseli.pro</h1>
                     <small>2023 -</small>
                 </div>
             </div>

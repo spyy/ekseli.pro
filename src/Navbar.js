@@ -67,7 +67,7 @@ const Navbar = props => {
     return (
         <nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">Ekseli Pro</a>
+                <a className="navbar-brand" href="#">ekseli.pro</a>
                 <button className="navbar-toggler p-0 border-0" type="button" aria-label="Toggle navigation" onClick={onClick}>
                     <span className="navbar-toggler-icon"></span>
                 </button>

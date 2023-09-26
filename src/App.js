@@ -66,7 +66,7 @@ const App = () => {
       return (
         <>
           <Navbar items={[]} onSignIn={onSignIn} />
-          <Introduction />
+          <Introduction onSignIn={onSignIn} />
         </>
       );
     case 'logged in':

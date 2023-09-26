@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import sheetDefault from './config/sheet.json'
-
 import MetadataModal from './MetadataModal';
 
 import * as utils from './utils';
@@ -9,11 +7,10 @@ import * as utils from './utils';
 
 
 const Metadata = props => {
-    const [state, setState] = useState('getDeveloperMetadata');
-    const [metadata, setMetadata] = useState({});
+    const [state, setState] = useState('metadata');
+    const [metadata, setMetadata] = useState(props.metadata);
     const [metadataChanged, setMetadataChanged] = useState(false);
-    const [metadataFound, setMetadataFound] = useState(false);
-    const [columnCount, setColumnCount] = useState(0);
+    const [columnCount, setColumnCount] = useState(props.metadata.columnCount);
     const [row, setRow] = useState({});
     const [rowKey, setRowKey] = useState('');
 
@@ -22,23 +19,9 @@ const Metadata = props => {
         console.log('state: ' + state);
     
         switch (state) {               
-            case 'getDeveloperMetadata':
-                getDeveloperMetadata();
-                break;               
-            case 'metadataNotFound':
-                setMetadata(sheetDefault);
-                setColumnCount(sheetDefault.columnCount);
-                setState('metadata');
-                break;
-            case 'metadataFound':
-                setMetadataFound(true);
-                setColumnCount(metadata.columnCount);
-                setState('metadata');
-                break;
             case 'metadata':
                 break;
             case 'metadataUpdated':         
-                setMetadataFound(true);
                 setMetadataChanged(false);
                 setState('metadataChanged');
                 break;
@@ -51,47 +34,6 @@ const Metadata = props => {
         }
     },[state]);
 
-    const handleResponse = metadataValue => {
-        console.log('handleResponse');
-
-        switch (typeof(metadataValue)){
-            case 'object':
-                setMetadata(metadataValue);
-                setMetadataFound(true);
-                break;
-            default:
-                console.log(typeof(metadataValue));
-        }
-
-        setState('metadataFound');
-    }
-
-    const handleErrorResponse = err => {
-        console.log(err);
-        
-        if (err?.status === 401) {
-            props.onTokenExpired();
-        } else {
-            setState('metadataNotFound');
-        }
-    }
-
-    const getDeveloperMetadata = () => {
-        const metadataId = props.sheetId + 1;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/developerMetadata/' + metadataId;
-        const args = {
-          'path': path
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseBody)
-          .then(utils.parsemetadataValue)
-          .then(handleResponse)
-          .catch(handleErrorResponse)
-    }
-
     const handleUpdateResponse = body => {
         console.log(body);
 
@@ -99,6 +41,8 @@ const Metadata = props => {
     }
 
     const createDeveloperMetadata = () => {
+        const metadataValue = Object.assign({}, metadata);
+        metadataValue.updatedAt = Date.now();        
         const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
         const args = {
             path: path,
@@ -109,7 +53,7 @@ const Metadata = props => {
                         developerMetadata: {
                             metadataId: props.sheetId + 1,
                             metadataKey: 'configuration',
-                            metadataValue: JSON.stringify(metadata),
+                            metadataValue: JSON.stringify(metadataValue),
                             visibility: 'DOCUMENT',
                             location: {
                                 sheetId: props.sheetId
@@ -130,6 +74,8 @@ const Metadata = props => {
     }
 
     const updateDeveloperMetadata = () => {
+        const metadataValue = Object.assign({}, metadata);
+        metadataValue.updatedAt = Date.now();
         const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
         const args = {
             path: path,
@@ -145,7 +91,7 @@ const Metadata = props => {
                         }],
                         developerMetadata: {
                             metadataKey: 'configuration',
-                            metadataValue: JSON.stringify(metadata),
+                            metadataValue: JSON.stringify(metadataValue),
                             location: {
                                 sheetId: props.sheetId
                             },
@@ -166,7 +112,7 @@ const Metadata = props => {
     }
 
     const onSave = () => {
-        if (metadataFound) {
+        if (metadata.updatedAt) {
             updateDeveloperMetadata();            
         } else {
             createDeveloperMetadata();
@@ -174,9 +120,11 @@ const Metadata = props => {
     }
 
     const onSaveColumn = (key, value) => {
-        metadata.columns[key] = value;
+        const newMetadata = Object.assign({}, metadata);
+        
+        newMetadata.columns[key] = value;
 
-        setMetadata(metadata);
+        setMetadata(newMetadata);
 
         setMetadataChanged(true);
 

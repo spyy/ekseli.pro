@@ -1,4 +1,4 @@
-# Ekseli Pro
+# ekseli.pro
 
 ## Ota koodista oma kopio ja julkaise siitä oma versio ilmaiseksi.
 

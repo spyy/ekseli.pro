@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import sheetDefault from './config/sheet.json'
-
 import ValuesModal from './ValuesModal';
 
 import * as utils from './utils';
@@ -9,33 +7,15 @@ import * as utils from './utils';
 
 
 const Values = props => {
-    const [state, setState] = useState('getDeveloperMetadata');
-    const [metadata, setMetadata] = useState({});
+    const [state, setState] = useState('getValues');
     const [selectedRow, setSelectedRow] = useState({});
     const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
     const [rows, setRows] = useState([]);
-
-    const [appendRange, setAppendRange] = useState('');
-    const [appendValues, setAppendValues] = useState([]);
-  
   
     useEffect(() => {
         console.log('state: ' + state);
     
-        switch (state) {               
-            case 'getDeveloperMetadata':
-                getDeveloperMetadata();
-                break;               
-            case 'metadataNotFound':
-                setMetadata(sheetDefault);
-                setState('metadata');
-                break;
-            case 'metadataFound':
-                setState('metadata');
-                break;
-            case 'metadata':
-                setState('getValues');
-                break;
+        switch (state) {  
             case 'getValues':
                 getValues();
                 break;
@@ -44,13 +24,6 @@ const Values = props => {
             case 'update':
                 setState('hideModal');
                 break;
-            case 'append':
-                append();
-                setState('hideModal');
-                break;
-            case 'appendAgain':
-                append();
-                break;
             case 'showModal':
             case 'hideModal':
                 break;            
@@ -58,46 +31,6 @@ const Values = props => {
                 break;
         }
     },[state]);
-
-    const handleDeveloperMetadataResponse = metadataValue => {
-        console.log('handleResponse');
-
-        switch (typeof(metadataValue)){
-            case 'object':
-                setMetadata(metadataValue);
-                break;
-            default:
-                console.log(typeof(metadataValue));
-        }
-
-        setState('metadataFound');
-    }
-
-    const handleErrorResponse = err => {
-        console.log(err);
-
-        if (err?.status === 401) {
-            props.onTokenExpired();
-        } else {
-            setState('metadataNotFound');
-        }
-    }
-
-    const getDeveloperMetadata = () => {
-        const metadataId = props.sheet.properties.sheetId + 1;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/developerMetadata/' + metadataId;
-        const args = {
-          'path': path
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseBody)
-          .then(utils.parsemetadataValue)
-          .then(handleDeveloperMetadataResponse)
-          .catch(handleErrorResponse)
-    }
 
     const handleGetValuesResponse = values => {
         //console.log(body);
@@ -168,41 +101,6 @@ const Values = props => {
           .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
     }
 
-    const updateIfNeeded = range => {
-        if (range.original === range.converted) {
-            setState('getValues');
-        } else {
-            setAppendRange(range.converted);
-
-            setState('appendAgain');
-        }
-    }
-
-    const append = () => {       
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/values/' + appendRange + ':append';
-        const args = {
-          'path': path,
-          'method': 'POST',
-          'params': {
-            'valueInputOption': 'RAW'
-          },
-          'body': {
-            'values': [appendValues]
-          }
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseResult)
-          .then(utils.parseUpdates)
-          .then(utils.parseUpdatedRange)
-          .then(utils.parseA1Notation)
-          .then(utils.convertA1Notation)
-          .then(updateIfNeeded)
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
-    }
-
     const onHideModal = () => {
         console.log('onHideModal');
     
@@ -219,25 +117,11 @@ const Values = props => {
     }
 
     const onSaveRow = (rowValues, rowNumber) => {
-        console.log(rowValues);
-        console.log(rowNumber);
-
-        if (rowNumber) {
-            updateValues(rowValues, rowNumber);
-
-            setState('update');
-        } else {
-            setAppendRange(props.sheet.properties.title);
-            setAppendValues(rowValues);
-            setState('append');
-        }
-    }
-
-    const onAdd = () => {
-        setSelectedRow([]);
-        setSelectedRowIndex(-1);       
+        console.log(rowValues);    
         
-        setState('showModal');
+        updateValues(rowValues, rowNumber);
+
+        setState('update');        
     }
 
     const renderColumn = (element, index) => {      
@@ -249,11 +133,11 @@ const Values = props => {
     const renderHead = props => {
         let columns = [];       
 
-        for (const [key, value] of Object.entries(metadata.columns)) {
+        for (const [key, value] of Object.entries(props.metadata.columns)) {
             columns.push(value);
         };
 
-        const slice = columns.slice(0, metadata.columnCount);
+        const slice = columns.slice(0, props.metadata.columnCount);
 
         return (   
             <thead>        
@@ -273,9 +157,9 @@ const Values = props => {
 
     const renderRow = (element, index) => {   
         const emptyRow = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];  
-        const slice = element.slice(0, metadata.columnCount);
+        const slice = element.slice(0, props.metadata.columnCount);
         const concat = slice.concat(emptyRow);
-        const newSlice = concat.slice(0, metadata.columnCount);
+        const newSlice = concat.slice(0, props.metadata.columnCount);
 
 
 
@@ -311,13 +195,9 @@ const Values = props => {
                         { renderHead(props) }
                         { renderBody(props) }
                     </table>
-                </div>
+                </div>                
 
-                <div className="d-grid d-md-flex justify-content-md-end">                    
-                    <button className="btn btn-outline-primary btn-lg" type="button" onClick={onAdd}>Lisää rivi</button>
-                </div>
-
-                <ValuesModal state={ state } rowData={ selectedRow } rowNumber={selectedRowIndex + 1} columns={metadata.columns} columnCount={metadata.columnCount} onCancel={onHideModal} onSave={onSaveRow} />
+                <ValuesModal state={ state } rowData={ selectedRow } rowNumber={selectedRowIndex + 1} columns={props.metadata.columns} columnCount={props.metadata.columnCount} onCancel={onHideModal} onSave={onSaveRow} />
             </div>
         );      
     }
