@@ -48,7 +48,7 @@ const Instructions = props => {
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <div className="lh-1">
                     <p className="lead my-3">Tästä voit luoda uuden Spreadsheet tiedoston Google Drive palveluun.</p>
-                    <p className="lead my-3">Luotu tiedosto on tyhjä, joten voit kopioida siihen sisällön Excel tiedostosta.</p>
+                    <p className="lead my-3">Luotu tiedosto on tyhjä, joten voit tarvittaessa kopioida siihen sisällön Excel tiedostosta.</p>
                     <button className="btn btn-success btn-lg float-end" type="button" onClick={() => setState('showModal')}>Uusi tiedosto</button>
                 </div>                
             </div>

@@ -5,16 +5,17 @@ import Navbar from './Navbar';
 import Instructions from './Instructions';
 import Spreadsheet from './Spreadsheet';
 import Content from './Content';
-import Loading from './Loading';
+import Breadcrumb from './Breadcrumb';
 
 
 import * as utils from './utils';
 
-const navbarItems = ['Google Sheets', 'Käyttöliittymä', 'Ohje'];
+const navbarItems = ['Spreadsheet', 'Käyttöliittymä', 'Ohje'];
 
 const OffCanvas = props => {
   const [state, setState] = useState('get files');
   const [activeNavbarItem, setActiveNavbarItem] = useState('');
+  const [action, setAction] = useState('');
   const [spreadsheet, setSpreadsheet] = useState(null);
   const [spreadsheets, setSpreadsheets] = useState([]);
 
@@ -25,18 +26,15 @@ const OffCanvas = props => {
       case 'get files':
         getFiles();
         break;
+      case 'not found':
+        break;
       case 'spreadsheets':
-        if (spreadsheets.length) {
-          setActiveNavbarItem('Google Sheets');
-        } else {
-          setState('instructions');
+        if (spreadsheets.length === 0) {
+          setState('not found');
         }
         break;            
       case 'spreadsheetSelected':
-        setState('spreadsheetChanged');
-        break;
-      case 'spreadsheetChanged':
-          break;
+        break;      
       case 'token expired':
         break;
       default:
@@ -53,6 +51,8 @@ const OffCanvas = props => {
 
     setSpreadsheets(result.files);
 
+    setActiveNavbarItem('Spreadsheet');
+
     setState('spreadsheets');
   }
 
@@ -62,7 +62,7 @@ const OffCanvas = props => {
       'params': {
         'spaces': 'drive',
         'fields': '*',
-        'q': 'mimeType = "application/vnd.google-apps.spreadsheet"'
+        'q': 'mimeType = "application/vnd.google-apps.spreadsheet" and trashed = false'
       }
     };
     
@@ -80,19 +80,14 @@ const OffCanvas = props => {
     setSpreadsheets([]);
     
     setSpreadsheet(null);
-
   }
 
   const onRefresh = () => {
     console.log('onRefresh');
+    
+    clear();
 
-    if (state === 'introduction') {
-      console.log('Please login first');
-    } else {
-      clear();
-
-      setState('get files');
-    }
+    setState('get files');
   }
 
   const onNavbarItem = item => {
@@ -101,32 +96,41 @@ const OffCanvas = props => {
     setActiveNavbarItem(item);
 
     setSpreadsheet(null);
+
+    setState('spreadsheets');
   }
 
-  const onSpreadsheet = spreadsheet => {
+  const onSpreadsheet = (spreadsheet, action) => {
     console.log(spreadsheet);
 
     setSpreadsheet(spreadsheet);
 
+    setAction(action);
+
     setState('spreadsheetSelected');
   }
 
-  const onTokenExpired = () => {
-    clear();
-    
-    setState('token expired');
+  const renderNotFound = props => {
+    return (
+      <main className="container">
+          <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+              <div className="lh-1">
+                  <p className="lead my-3">Yhtään tiedostoa ei löytynyt.</p>                
+                  <p className="lead my-3">Katso <a href="#" className="text-white fw-bold" onClick={() => setActiveNavbarItem('Ohje')}>Ohje</a> kuinka luoda uusi tiedosto.</p>
+              </div>
+          </div>
+      </main>
+    );
   }
 
-  const renderMain = () => {      
-      console.log(activeNavbarItem);  
+  const renderMain = props => {      
+      console.log('main ' + activeNavbarItem);  
 
       switch (activeNavbarItem) {
-        case 'Google Sheets':
+        case 'Spreadsheet':
         case 'Käyttöliittymä':
-          if (spreadsheet) {
-            return (
-              <Spreadsheet activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } onTokenExpired={ onTokenExpired } />
-            );
+          if (state === 'not found') {
+            return renderNotFound(props);
           } else {
             return (
               <Content 
@@ -146,25 +150,35 @@ const OffCanvas = props => {
 
   switch (state) {
     case 'get files':
+      return (
+        <></>
+      );
+    case 'not found':      
+    case 'spreadsheets':
+      return (
+        <>
+          <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
+          { renderMain(props) }
+        </>
+      );
     case 'spreadsheetSelected':
       return (
         <>
           <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
-          <Loading />
+          <Breadcrumb activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } onBack={() => setState('spreadsheets')} />
+          <Spreadsheet activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } action={action} onTokenExpired={ props.onTokenExpired } />
         </>
       );
     case 'token expired':
       return (
         <>
+          <Navbar items={[]} />
           <TokenExpired />
         </>
       );
     default:
       return (
-        <>          
-          <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
-          { renderMain() }
-        </>
+        <></>
       );
   }
 }
