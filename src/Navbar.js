@@ -42,7 +42,29 @@ const Navbar = props => {
             );
         }
     }
-    
+
+    const renderGoogleButton = props => {
+        const style = {
+            display: 'none'            
+        };
+        if (props.onSignIn) {
+            return (
+                <button className="gsi-material-button">
+                    <div className="gsi-material-button-state"></div>
+                    <div className="gsi-material-button-content-wrapper">
+                        <div className="gsi-material-button-icon">
+                            <img src="google.svg" alt="" />
+                        </div>
+                        <span className="gsi-material-button-contents">Kirjaudu sisään</span>
+                        <span style={style}>Kirjaudu sisään</span>
+                    </div>
+                </button>
+            );
+        } else {
+            return null;
+        }        
+    }
+
     const renderLoginButton = props => {
         if (props.onSignIn) {
             return (
@@ -78,9 +100,7 @@ const Navbar = props => {
                             props.items.map((element, index) => renderItem(element, index))
                         }
                     </ul>
-                    <form className="d-flex">
-                        { renderLoginButton(props) }
-                        { renderLogoutButton(props) }
+                    <form className="d-flex">                        
                     </form>
                 </div>
             </div>

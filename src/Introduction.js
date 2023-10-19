@@ -1,21 +1,48 @@
 
 const Introduction = props => {
 
+    const renderGoogleButton = props => {
+        const style = {
+            display: 'none'            
+        };
+        if (props.onSignIn) {
+            return (
+                <button className="gsi-material-button" onClick={() => props.onSignIn()}>
+                    <div className="gsi-material-button-state"></div>
+                    <div className="gsi-material-button-content-wrapper">
+                        <div className="gsi-material-button-icon">
+                            <img src="google.svg" alt="" />
+                        </div>
+                        <span className="gsi-material-button-contents">Kirjaudu sisään</span>
+                        <span style={style}>Kirjaudu sisään</span>
+                    </div>
+                </button>
+            );
+        } else {
+            return null;
+        }        
+    }
+
     return (
         <main className="container">
       
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <div className="lh-1">
-                    <h2 className="display-4 fst-italic">Spreadsheet tiedostosi mobiilisti</h2>
+                    <h2 className="display-4 fst-italic">Excel tiedostosi puhelimessasi</h2>
                 </div>
             </div>
     
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
                 <div className="lh-1">
-                    <p className="lead my-3">ekseli.pro on vapaasti käytettävä ohjelma, joka hyödyntää Googlen tarjoamaa ilmaista Drive palvelua.</p>
-                    <p className="lead my-3">Voit laittaa levyn nurkallasi olevat Excel tiedostosi Googlen pilveen ja käyttää niitä mobiilisti.</p>
-                    <p className="lead my-3">Voit myös itse säätää jokaiselle tiedostolle kenttien määrän, niiden nimet ja minkälaista syötettä ne ottavat vastaan.</p>
-                    <p className="lead my-3">Tarvitset Google tunnukset kirjautumiseen. <a href="#" className="text-white fw-bold" onClick={() => props.onSignIn()}>Kirjaudu sisään</a></p>
+                    <p className="lead my-3">ekseli.pro on ilmainen ja vapaasti käytettävä ohjelma, joka tarjoaa mobiili käyttöliittymän Excel/Spreadsheet tiedostoihisi.</p>
+                    <p className="lead my-3">Ohjelman kautta voit säätää jokaiselle tiedostollesi millaisen käyttöliittymän haluat.</p>
+                </div>
+            </div>
+
+            <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+                <div className="lh-1">
+                    <p className="lead my-3">Ohjelma hyödyntää ilmaista <a href="https://www.google.com/drive/" target="_blank" className="text-white fw-bold">Google Drive</a> palvelua.</p>
+                    <p className="lead my-3 mt-4">{ renderGoogleButton(props) }</p>
                 </div>
             </div>
     
