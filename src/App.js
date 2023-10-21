@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Loading from './Loading';
 import OffCanvas from './OffCanvas';
@@ -12,17 +12,32 @@ import appConfig from './config/app.json';
 
 const App = () => {
   const [state, setState] = useState('loading');
-  const [text, setText] = useState('init');
   
   const tokenClient = useRef(0);
 
-  const handleTokenResponse = tokenResponse => {
-    console.log(tokenResponse);
+  useEffect(() => {
+    console.log('jipii state: ' + state);
 
-    if (tokenResponse && tokenResponse.access_token) {    
-        setState('logged in');
+    const handleTokenResponse = tokenResponse => {
+      console.log(tokenResponse);
+  
+      if (tokenResponse && tokenResponse.access_token) {    
+          setState('logged in');
+      }
     }
-  }
+
+    const onApiLoaded = () => {
+      tokenClient.current = window.google.accounts.oauth2.initTokenClient({
+          client_id: appConfig.client_id,
+          scope: appConfig.scope,
+          callback: handleTokenResponse
+      });        
+  
+      setState('api loaded');
+    }
+
+    window.gapi.load('client', onApiLoaded);   
+  },[]);
 
   const onSignIn = () => {
     if (window.gapi.client.getToken() === null) {
@@ -36,45 +51,29 @@ const App = () => {
     setState('api loaded');
   }
 
-  const onApiLoaded = () => {
-    tokenClient.current = window.google.accounts.oauth2.initTokenClient({
-        client_id: appConfig.client_id,
-        scope: appConfig.scope,
-        callback: handleTokenResponse
-    });        
-
-    setState('api loaded');
-  }
-
   const onTokenExpired = () => {
     setState('token expired');
   }
 
   document.onreadystatechange = (event) => {
-    setText('onreadystatechange');
+    console.log('onGoogleLibraryLoad');
   };
 
   window.onGoogleLibraryLoad = () => {
     console.log('onGoogleLibraryLoad');
-
-    //window.gapi.load('client', () => setState('api loaded'));
-
-    setText('onGoogleLibraryLoad');
   };
 
   window.onload = event => {
     console.log("page is fully loaded");
 
-    setText('onload');
-
-    window.gapi.load('client', onApiLoaded);
+    //window.gapi.load('client', onApiLoaded);
   };
 
   switch (state) {
     case 'api loaded':
       return (
         <>
-          <Navbar items={[]} onSignIn={onSignIn} />
+          <Navbar items={[]} />
           <Introduction onSignIn={onSignIn} />
         </>
       );

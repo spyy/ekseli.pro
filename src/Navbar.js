@@ -100,7 +100,9 @@ const Navbar = props => {
                             props.items.map((element, index) => renderItem(element, index))
                         }
                     </ul>
-                    <form className="d-flex">                        
+                    <form className="d-flex">      
+                        { renderLoginButton(props) }
+                        { renderLogoutButton(props) }                  
                     </form>
                 </div>
             </div>
