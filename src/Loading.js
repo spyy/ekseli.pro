@@ -6,6 +6,9 @@ function Loading(props) {
                 <div className="spinner-border" role="status">
                     <span className="visually-hidden">Lataa...</span>
                 </div>
+                <div>
+                    <p>{ props.text }</p>
+                </div>
             </div>
         </main>
     );

@@ -12,6 +12,7 @@ import appConfig from './config/app.json';
 
 const App = () => {
   const [state, setState] = useState('loading');
+  const [text, setText] = useState('init');
   
   const tokenClient = useRef(0);
 
@@ -49,14 +50,22 @@ const App = () => {
     setState('token expired');
   }
 
+  document.onreadystatechange = (event) => {
+    setText('onreadystatechange');
+  };
+
   window.onGoogleLibraryLoad = () => {
     console.log('onGoogleLibraryLoad');
 
     //window.gapi.load('client', () => setState('api loaded'));
+
+    setText('onGoogleLibraryLoad');
   };
 
   window.onload = event => {
     console.log("page is fully loaded");
+
+    setText('onload');
 
     window.gapi.load('client', onApiLoaded);
   };
