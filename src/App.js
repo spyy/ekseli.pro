@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Loading from './Loading';
 import OffCanvas from './OffCanvas';
@@ -9,37 +9,31 @@ import TokenExpired from './TokenExpired';
 import appConfig from './config/app.json';
 
 
+window.gapi.load('client', () => console.log('api loaded'));
+
 
 const App = () => {
-  const [state, setState] = useState('loading');
+  const [state, setState] = useState('api loaded');
   
   const tokenClient = useRef(0);
 
-  useEffect(() => {
-    console.log('jipii state: ' + state);
+  const handleTokenResponse = tokenResponse => {
+    console.log(tokenResponse);
 
-    const handleTokenResponse = tokenResponse => {
-      console.log(tokenResponse);
-  
-      if (tokenResponse && tokenResponse.access_token) {    
-          setState('logged in');
-      }
+    if (tokenResponse && tokenResponse.access_token) {    
+        setState('logged in');
     }
-
-    const onApiLoaded = () => {
-      tokenClient.current = window.google.accounts.oauth2.initTokenClient({
-          client_id: appConfig.client_id,
-          scope: appConfig.scope,
-          callback: handleTokenResponse
-      });        
-  
-      setState('api loaded');
-    }
-
-    window.gapi.load('client', onApiLoaded);   
-  },[]);
+  }
 
   const onSignIn = () => {
+    console.log('onSignIn');
+
+    tokenClient.current = window.google.accounts.oauth2.initTokenClient({
+        client_id: appConfig.client_id,
+        scope: appConfig.scope,
+        callback: handleTokenResponse
+    });
+
     if (window.gapi.client.getToken() === null) {
         tokenClient.current.requestAccessToken({prompt: 'consent'});
     } else {
@@ -54,20 +48,6 @@ const App = () => {
   const onTokenExpired = () => {
     setState('token expired');
   }
-
-  document.onreadystatechange = (event) => {
-    console.log('onGoogleLibraryLoad');
-  };
-
-  window.onGoogleLibraryLoad = () => {
-    console.log('onGoogleLibraryLoad');
-  };
-
-  window.onload = event => {
-    console.log("page is fully loaded");
-
-    //window.gapi.load('client', onApiLoaded);
-  };
 
   switch (state) {
     case 'api loaded':
