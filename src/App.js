@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Loading from './Loading';
 import OffCanvas from './OffCanvas';
@@ -9,13 +9,26 @@ import TokenExpired from './TokenExpired';
 import appConfig from './config/app.json';
 
 
-window.gapi.load('client', () => console.log('api loaded'));
+window.gapi.load('client', () => console.log('gapi loaded'));
 
 
 const App = () => {
   const [state, setState] = useState('api loaded');
   
   const tokenClient = useRef(0);
+
+  useEffect(() => {
+    if (tokenClient.current) {
+      console.log(state);
+    } else {
+      console.log('initTokenClient');
+      tokenClient.current = window.google.accounts.oauth2.initTokenClient({
+        client_id: appConfig.client_id,
+        scope: appConfig.scope,
+        callback: handleTokenResponse
+    });
+    }
+});
 
   const handleTokenResponse = tokenResponse => {
     console.log(tokenResponse);
@@ -27,12 +40,6 @@ const App = () => {
 
   const onSignIn = () => {
     console.log('onSignIn');
-
-    tokenClient.current = window.google.accounts.oauth2.initTokenClient({
-        client_id: appConfig.client_id,
-        scope: appConfig.scope,
-        callback: handleTokenResponse
-    });
 
     if (window.gapi.client.getToken() === null) {
         tokenClient.current.requestAccessToken({prompt: 'consent'});
