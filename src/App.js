@@ -9,7 +9,7 @@ import TokenExpired from './TokenExpired';
 import appConfig from './config/app.json';
 
 
-window.gapi.load('client', () => console.log('gapi loaded'));
+//window.gapi.load('client', () => console.log('gapi loaded'));
 
 
 const App = () => {
@@ -18,25 +18,41 @@ const App = () => {
   const tokenClient = useRef(0);
 
   useEffect(() => {
-    if (tokenClient.current) {
-      console.log(state);
-    } else {
-      console.log('initTokenClient');
-      tokenClient.current = window.google.accounts.oauth2.initTokenClient({
-        client_id: appConfig.client_id,
-        scope: appConfig.scope,
-        callback: handleTokenResponse
-    });
-    }
-});
+    console.log(state);
 
-  const handleTokenResponse = tokenResponse => {
-    console.log(tokenResponse);
-
-    if (tokenResponse && tokenResponse.access_token) {    
-        setState('logged in');
+    const handleTokenResponse = tokenResponse => {
+      console.log(tokenResponse);
+  
+      if (tokenResponse && tokenResponse.access_token) {    
+          setState('logged in');
+      }
     }
-  }
+
+    const initTokenClient = () => {
+      if (tokenClient.current) {
+        console.log('client already initialized');
+      } else {
+        tokenClient.current = window.google.accounts.oauth2.initTokenClient({
+          client_id: appConfig.client_id,
+          scope: appConfig.scope,
+          callback: handleTokenResponse
+        });
+      }
+
+      setState('client initialized');
+    }
+
+    switch (state) {
+      case 'api loaded':
+        window.gapi.load('client', () => setState('gapi loaded'));
+        break;
+      case 'gapi loaded':
+        initTokenClient();
+        break;      
+      default:
+        break;
+    }
+  },[state]);
 
   const onSignIn = () => {
     console.log('onSignIn');
@@ -57,7 +73,7 @@ const App = () => {
   }
 
   switch (state) {
-    case 'api loaded':
+    case 'client initialized':
       return (
         <>
           <Navbar items={[]} />
