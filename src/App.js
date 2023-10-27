@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef} from 'react';
 
 import Loading from './Loading';
 import OffCanvas from './OffCanvas';
@@ -13,49 +13,39 @@ import appConfig from './config/app.json';
 
 
 const App = () => {
-  const [state, setState] = useState('api loaded');
+  const [state, setState] = useState('logged out');
   
   const tokenClient = useRef(0);
 
-  useEffect(() => {
-    console.log(state);
+  const handleTokenResponse = tokenResponse => {
+    console.log(tokenResponse);
 
-    const handleTokenResponse = tokenResponse => {
-      console.log(tokenResponse);
-  
-      if (tokenResponse && tokenResponse.access_token) {    
-          setState('logged in');
-      }
+    if (tokenResponse && tokenResponse.access_token) {    
+        setState('logged in');
     }
+  }
 
-    const initTokenClient = () => {
-      if (tokenClient.current) {
-        console.log('client already initialized');
-      } else {
+  const initTokenClient = () => {
+    if (tokenClient.current) {
+      console.log('client already initialized');
+    } else {
+      if (window.google) {
         tokenClient.current = window.google.accounts.oauth2.initTokenClient({
           client_id: appConfig.client_id,
           scope: appConfig.scope,
           callback: handleTokenResponse
         });
+      } else {
+        console.log('google not initialized');      
+        return false;
       }
-
-      setState('client initialized');
     }
 
-    switch (state) {
-      case 'api loaded':
-        window.gapi.load('client', () => setState('gapi loaded'));
-        break;
-      case 'gapi loaded':
-        initTokenClient();
-        break;      
-      default:
-        break;
-    }
-  },[state]);
+    return true;
+  }
 
-  const onSignIn = () => {
-    console.log('onSignIn');
+  const requestAccessToken = () => {
+    console.log('requestAccessToken');
 
     if (window.gapi.client.getToken() === null) {
         tokenClient.current.requestAccessToken({prompt: 'consent'});
@@ -64,8 +54,18 @@ const App = () => {
     }
   }
 
+  const onSignIn = () => {
+    console.log('onSignIn');
+
+    if (initTokenClient()) {
+      requestAccessToken();
+    } else {
+      console.log('signin failed');
+    }
+  }
+
   const onSignOut = () => {
-    setState('api loaded');
+    setState('logged out');
   }
 
   const onTokenExpired = () => {
@@ -73,7 +73,7 @@ const App = () => {
   }
 
   switch (state) {
-    case 'client initialized':
+    case 'logged out':
       return (
         <>
           <Navbar items={[]} />
