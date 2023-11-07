@@ -8,12 +8,13 @@ ekseli.pro noudattaa Google API -palveluiden käyttäjätietokäytäntöä, muka
 
 Palvelu ei talleta eikä jaa käyttäjän tietoja.
 
-Ominaisuudet jotka liittyvät käyttäjän tietoihin.
+Ohjelma tarvitsee seuraavat oikeuden katsoa, muokata, luoda ja poistaa omia Spreadsheet tiedostoja. Vastineeksi ohjelma tarjoaa seuraavat ominaisuudet.
 
-1) listaus sinulle kuuluvista tai jaetuista Google Spreadsheet tiedostoista
-2) Tiedoston katselu
-3) Uuden rivin lisääminen tiedostoon
-4) Olemassa olevan rivin muokkaaminen
+* Uuden Spreadsheet tiedoston luonti
+* Listaus sinulle kuuluvista tai jaetuista Google Spreadsheet tiedostoista
+* Spreadsheet tiedoston katselu
+* Uuden rivin lisääminen Spreadsheet tiedostoon
+* Olemassa olevan rivin muokkaaminen Spreadsheet tiedostossa
 
 ## Privacy statement.
 
@@ -23,11 +24,12 @@ ekseli.pro use and transfer of information received from Google APIs to any othe
 
 The service does not store or share user data anywhere.
 
-Features related to user data.
+The program needs the following rights to view, modify, create and delete own Spreadsheet files. In return, the program offers the following features.
 
-1) listing of Google Spreadsheet files belonging to you or shared by you
-2) File viewing
-3) Adding a new row to the file
-4) Editing an existing row
+* Create new Spreadsheet file
+* List of Google Spreadsheet files belonging to you or shared by you
+* Viewing Spreadsheet file
+* Adding a new row to the Spreadsheet file
+* Editing an existing row in Spreadsheet file
 
 
