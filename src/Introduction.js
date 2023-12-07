@@ -1,3 +1,5 @@
+import updates from './config/updates.json';
+
 
 const Introduction = props => {
 
@@ -7,7 +9,7 @@ const Introduction = props => {
         };
         if (props.onSignIn) {
             return (
-                <button className="gsi-material-button" onClick={() => props.onSignIn()}>
+                <button className="gsi-materialbutton" onClick={() => props.onSignIn()}>
                     <div className="gsi-material-button-state"></div>
                     <div className="gsi-material-button-content-wrapper">
                         <div className="gsi-material-button-icon">
@@ -22,6 +24,18 @@ const Introduction = props => {
             return null;
         }        
     }
+
+    const renderUpdate = update => {
+        return (                       
+            <div className="d-flex text-muted pt-3">
+                <svg className="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill={update.color}></rect><text x="50%" y="50%" fill={update.color} dy=".3em">32x32</text></svg>                    
+                <p className="pb-3 mb-0 small lh-sm border-bottom">                    
+                <strong className="d-block text-gray-dark">{update.author}</strong>
+                { update.description }
+                </p>                    
+            </div>                
+        );
+    }     
 
     return (
         <main className="container">
@@ -46,16 +60,14 @@ const Introduction = props => {
                     <p className="lead my-3 mt-4">{ renderGoogleButton(props) }</p>
                 </div>
             </div>
-    
+
             <div className="my-3 p-3 bg-body rounded shadow-sm">
-                <h6 className="border-bottom pb-2 mb-0">Viimeisimmät päivitykset</h6>               
-                <div className="d-flex text-muted pt-3">
-                    <svg className="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#e83e8c"></rect><text x="50%" y="50%" fill="#e83e8c" dy=".3em">32x32</text></svg>                    
-                    <p className="pb-3 mb-0 small lh-sm border-bottom">                    
-                    <strong className="d-block text-gray-dark">sami.pyy@gmail.com</strong>
-                    (22.11.2023) Versio 1.0.                    
-                    </p>                    
-                </div>                
+                <h6 className="border-bottom pb-2 mb-0">Viimeisimmät päivitykset</h6>  
+                { 
+                    updates.map(update => {
+                        return (renderUpdate(update));
+                    })
+                }                                             
             </div>
     
             <div className="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">

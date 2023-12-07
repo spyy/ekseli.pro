@@ -53,7 +53,7 @@ const MetadataModal = props => {
         return (
             <div className="modal-body">
                 <div className="form-floating my-3">
-                    <input type="email" className="form-control" placeholder="Syötekentän nimi" ref={nameRef} defaultValue={props.column.name} />
+                    <input type="text" className="form-control" placeholder="Syötekentän nimi" ref={nameRef} defaultValue={props.column.name} />
                     <label>Nimi</label>
                 </div>
                 <div className="form-floating my-3">
@@ -71,6 +71,8 @@ const MetadataModal = props => {
                         <option value="numeric">numeric</option>
                         <option value="decimal">decimal</option>
                         <option value="search">search</option>
+                        <option value="date">date</option>
+                        <option value="time">time</option>
                     </select>
                     <label>Syöte</label>
                 </div>
