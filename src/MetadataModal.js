@@ -4,6 +4,7 @@ const MetadataModal = props => {
   const modalRef = useRef();
   const nameRef = useRef();
   const inputModeRef = useRef();
+  const typeRef = useRef();
 
   useEffect(() => {
       console.log('props.show: ' + props.state);
@@ -38,7 +39,7 @@ const MetadataModal = props => {
   const onSave = () => {
     const column = {
         'name': nameRef.current.value,
-        'type': props.column.type,
+        'type': typeRef.current.value,
         'required': props.column.required,
         'disabled': props.column.disabled,
         'readonly': props.column.readonly,
@@ -49,7 +50,7 @@ const MetadataModal = props => {
   }
 
   const renderBody = props => {
-    if (props.state == 'showModal') {
+    if (props.state === 'showModal') {
         return (
             <div className="modal-body">
                 <div className="form-floating my-3">
@@ -57,8 +58,18 @@ const MetadataModal = props => {
                     <label>Nimi</label>
                 </div>
                 <div className="form-floating my-3">
-                    <select className="form-select" disabled>
-                        <option>Ominaisuus kehitteillä</option>
+                    <select className="form-select" ref={typeRef} defaultValue={props.column.type}>
+                        <option value="text">text</option>
+                        <option value="tel">tel</option>
+                        <option value="url">url</option>
+                        <option value="email">email</option>
+                        <option value="number">number</option>
+                        <option value="search">search</option>
+                        <option value="date">date</option>
+                        <option value="time">time</option>
+                        <option value="color">color</option>
+                        <option value="month">month</option>
+                        <option value="week">week</option>
                     </select>
                     <label>Syötekentän tyyppi</label>
                 </div>
@@ -71,8 +82,6 @@ const MetadataModal = props => {
                         <option value="numeric">numeric</option>
                         <option value="decimal">decimal</option>
                         <option value="search">search</option>
-                        <option value="date">date</option>
-                        <option value="time">time</option>
                     </select>
                     <label>Syöte</label>
                 </div>

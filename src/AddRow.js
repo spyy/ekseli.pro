@@ -47,7 +47,7 @@ const AddRow = props => {
         if (props.metadata.columnCount > cell) {
             return (
                 <div className="form-floating my-3">
-                    <input type="text" className="form-control" inputMode={column.inputmode} placeholder={column.name} ref={ref} defaultValue={''} />
+                    <input type={column.type} className="form-control" inputMode={column.inputmode} placeholder={column.name} ref={ref} defaultValue={''} />
                     <label>{column.name}</label>
                 </div>
             );        

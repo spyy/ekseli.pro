@@ -1,7 +1,7 @@
 
 const Sheets = props => {
     const renderItem = (element, index) => {
-        if (element.properties.index == props.selected) {
+        if (element.properties.index === props.selected) {
             return (
                 <li className="nav-item" key={ parseInt(index) }>
                     <a className="nav-link active" aria-current="true">{ element.properties.title }</a>
