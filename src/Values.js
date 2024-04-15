@@ -197,7 +197,7 @@ const Values = props => {
                     </table>
                 </div>                
 
-                <ValuesModal state={ state } rowData={ selectedRow } rowNumber={selectedRowIndex + 1} columns={props.metadata.columns} columnCount={props.metadata.columnCount} onCancel={onHideModal} onSave={onSaveRow} />
+                <ValuesModal state={ state } rowData={ selectedRow } rowNumber={selectedRowIndex + 1} metadata={props.metadata} onCancel={onHideModal} onSave={onSaveRow} />
             </div>
         );      
     }

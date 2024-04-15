@@ -168,6 +168,7 @@ const Metadata = props => {
                     <th scope="col">Käytössä</th>
                     <th scope="col">Vain luku</th>
                     <th scope="col">Syöte</th>
+                    <th scope="col">Oletusarvo</th>
                 </tr>
             </thead>
         );
@@ -183,6 +184,7 @@ const Metadata = props => {
             <td>{ value.disabled ? 'Ei' : 'Kyllä' }</td>
             <td>{ value.readonly ? 'Kyllä' : 'Ei' }</td>
             <td>{ value.inputmode }</td>
+            <td>{ value.value }</td>
           </tr>
         );
     }

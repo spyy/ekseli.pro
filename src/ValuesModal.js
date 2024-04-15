@@ -96,9 +96,17 @@ const ValuesModal = props => {
   }
 
   const renderColumn = (props, column, cell, ref) => {
-    const defaultValue = props.rowData.at(cell) ? props.rowData[cell] : '';
+    let defaultValue = '';
+    
+    if(props.rowData.at(cell)) {
+        defaultValue = props.rowData[cell];
+    } else if (column.value.length) {
+        defaultValue = column.value;
+    } else {
+        defaultValue = '';
+    }
 
-    if (props.columnCount > cell) {
+    if (props.metadata.columnCount > cell) {
         return (
             <div className="form-floating my-3">
                 <input type="text" className="form-control" inputMode={column.inputmode} placeholder={column.name} ref={ref} defaultValue={defaultValue} />
@@ -114,22 +122,22 @@ const ValuesModal = props => {
         if (props.state === 'showModal') {
             return (
                 <div className="modal-body">
-                    { renderColumn(props, props.columns['A'], 0, columnARef) }
-                    { renderColumn(props, props.columns['B'], 1, columnBRef) }
-                    { renderColumn(props, props.columns['C'], 2, columnCRef) }
-                    { renderColumn(props, props.columns['D'], 3, columnDRef) }
-                    { renderColumn(props, props.columns['E'], 4, columnERef) }
-                    { renderColumn(props, props.columns['F'], 5, columnFRef) }
-                    { renderColumn(props, props.columns['G'], 6, columnGRef) }
-                    { renderColumn(props, props.columns['H'], 7, columnHRef) }
-                    { renderColumn(props, props.columns['I'], 8, columnIRef) }
-                    { renderColumn(props, props.columns['J'], 9, columnJRef) }
-                    { renderColumn(props, props.columns['K'], 10, columnKRef) }
-                    { renderColumn(props, props.columns['L'], 11, columnLRef) }
-                    { renderColumn(props, props.columns['M'], 12, columnMRef) }
-                    { renderColumn(props, props.columns['N'], 13, columnNRef) }
-                    { renderColumn(props, props.columns['O'], 14, columnORef) }
-                    { renderColumn(props, props.columns['P'], 15, columnPRef) }
+                    { renderColumn(props, props.metadata.columns['A'], 0, columnARef) }
+                    { renderColumn(props, props.metadata.columns['B'], 1, columnBRef) }
+                    { renderColumn(props, props.metadata.columns['C'], 2, columnCRef) }
+                    { renderColumn(props, props.metadata.columns['D'], 3, columnDRef) }
+                    { renderColumn(props, props.metadata.columns['E'], 4, columnERef) }
+                    { renderColumn(props, props.metadata.columns['F'], 5, columnFRef) }
+                    { renderColumn(props, props.metadata.columns['G'], 6, columnGRef) }
+                    { renderColumn(props, props.metadata.columns['H'], 7, columnHRef) }
+                    { renderColumn(props, props.metadata.columns['I'], 8, columnIRef) }
+                    { renderColumn(props, props.metadata.columns['J'], 9, columnJRef) }
+                    { renderColumn(props, props.metadata.columns['K'], 10, columnKRef) }
+                    { renderColumn(props, props.metadata.columns['L'], 11, columnLRef) }
+                    { renderColumn(props, props.metadata.columns['M'], 12, columnMRef) }
+                    { renderColumn(props, props.metadata.columns['N'], 13, columnNRef) }
+                    { renderColumn(props, props.metadata.columns['O'], 14, columnORef) }
+                    { renderColumn(props, props.metadata.columns['P'], 15, columnPRef) }
                 </div>          
             );
         } else {
