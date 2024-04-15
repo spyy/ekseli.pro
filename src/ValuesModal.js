@@ -95,12 +95,14 @@ const ValuesModal = props => {
     props.onSave(row, props.rowNumber); 
   }
 
+  
   const renderColumn = (props, column, cell, ref) => {
+    console.log('>>>>>>>>>>>>>');
+    console.log(column);
+    console.log('<<<<<<<<<<<<<');
     let defaultValue = '';
     
-    if(props.rowData.at(cell)) {
-        defaultValue = props.rowData[cell];
-    } else if (column.value.length) {
+    if (column?.value?.length) {
         defaultValue = column.value;
     } else {
         defaultValue = '';
