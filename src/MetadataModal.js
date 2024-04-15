@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-import columnDefault from './config/column.json'
+import columnDefault from './config/column.json';
 
 
 const MetadataModal = props => {

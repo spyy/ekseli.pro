@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 
+import columnDefault from './config/column.json';
+
 
 const AddRow = props => {
     const columnARef = useRef(null);
@@ -44,11 +46,16 @@ const AddRow = props => {
 
 
     const renderColumn = (props, column, cell, ref) => {
+        const name = column.name ? column.name : columnDefault.name;
+        const type = column.type ? column.type : columnDefault.type;
+        const inputmode = column.inputmode ? column.inputmode : columnDefault.inputmode;
+        const value = column.value ? column.value : columnDefault.value;
+
         if (props.metadata.columnCount > cell) {
             return (
                 <div className="form-floating my-3">
-                    <input type={column.type} className="form-control" inputMode={column.inputmode} placeholder={column.name} ref={ref} defaultValue={''} />
-                    <label>{column.name}</label>
+                    <input type={type} className="form-control" inputMode={inputmode} placeholder={name} ref={ref} defaultValue={value} />
+                    <label>{name}</label>
                 </div>
             );        
         } else {
