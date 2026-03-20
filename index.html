@@ -3,73 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyApp - Landing Page</title>
+    <title>App Showcase - 5 Image Layout</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 font-sans">
+    <style>
+        /* Desktop Mockup Styling */
+        .desktop-window {
+            border: 8px solid #0f172a;
+            border-top: 24px solid #0f172a;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .desktop-window::before {
+            content: "";
+            position: absolute;
+            top: -18px;
+            left: 10px;
+            width: 6px;
+            height: 6px;
+            background: #ff5f56;
+            border-radius: 50%;
+            box-shadow: 12px 0 0 #ffbd2e, 24px 0 0 #27c93f;
+            z-index: 20;
+        }
 
-    <!-- Header / Nav -->
-    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto">
-        <div class="text-2xl font-bold text-blue-600">MyApp</div>
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Download</button>
+        /* Mobile Phone Mockup Styling */
+        .phone-mockup {
+            border: 7px solid #0f172a;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            background: #000;
+            position: relative;
+        }
+        .phone-mockup::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30%;
+            height: 12px;
+            background: #0f172a;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <!-- Navigation -->
+    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+        <div class="text-2xl font-black tracking-tighter text-blue-600 uppercase">ekseli.pro</div>
+        
+        <!-- Get Started Link -->
+        <a href="app/index.html" class="inline-block bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-blue-600 transition-all transform hover:-translate-y-0.5">
+            Aloita
+        </a>
     </nav>
 
-    <!-- Hero Section (Image 1) -->
-    <section class="max-w-6xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center">
-        <div class="md:w-1/2 mb-10 md:mb-0">
-            <h1 class="text-5xl font-extrabold text-gray-900 leading-tight mb-6">Master your productivity with MyApp.</h1>
-            <p class="text-lg text-gray-600 mb-8">The all-in-one solution for teams to stay organized, focused, and ahead of schedule.</p>
-            <div class="space-x-4">
-                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg font-medium inline-block">App Store</a>
-                <a href="#" class="bg-gray-200 text-gray-800 px-8 py-3 rounded-lg font-medium inline-block">Play Store</a>
+    <!-- HERO SECTION (Image 1: Desktop) -->
+    <header class="max-w-7xl mx-auto px-6 pt-8 pb-20 text-center">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
+            Käytä ekseliä <br> <span class="text-blue-600">mobiilisti.</span>
+        </h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-12">
+            Ohjelma on ilmainen käyttää ja toimii selaimessa. Tietosi pysyvät tallessa Sheet tiedostossa Google Drive:ssa.
+        </p>
+
+        <div class="max-w-4xl mx-auto">
+            <div class="desktop-window aspect-video">
+                <!-- IMAGE 1: Desktop Hero -->
+                <img src="images/hero.jpg" 
+                     alt="Desktop Interface" 
+                     class="w-full h-full object-cover">
             </div>
         </div>
-        <div class="md:w-1/2">
-            <!-- IMAGE 1: Hero Image (App Mockup) -->
-            <img src="images/hero.jpg" alt="App Hero" class="rounded-2xl shadow-2xl">
-        </div>
-    </section>
+    </header>
 
-    <!-- Features Section (Images 2 & 3) -->
-    <section class="bg-white py-20">
-        <div class="max-center max-w-6xl mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-16 text-gray-900">Why choose us?</h2>
+    <!-- FEATURES SECTION (Images 2, 3, 4, 5: Mobile) -->
+    <section class="bg-white py-24 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold">Optimoitu mobiiliin</h2>
+                <p class="text-slate-500 mt-2">Ekseli taskussasi.</p>
+            </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Grid: 1 col on mobile, 2 on tablet, 4 on desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+                
                 <!-- Feature 1 -->
-                <div class="text-center">
-                    <div class="h-48 mb-6 overflow-hidden rounded-xl">
-                        <!-- IMAGE 2: Feature Illustration -->
-                        <img src="images/photo_2026-03-20_11-26-50.jpg" alt="Data Analytics" class="w-full h-full object-cover">
+                <div class="flex flex-col items-center">
+                    <div class="phone-mockup w-full max-w-[240px] aspect-[9/19] mb-6">
+                        <img src="images/feature1.jpg" 
+                             alt="Dashboard" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Smart Analytics</h3>
-                    <p class="text-gray-600">Track your progress with real-time data and beautiful charts.</p>
+                    <h3 class="font-bold text-lg mb-1">Tiedosto listaus</h3>
+                    <p class="text-sm text-slate-500 text-center px-4">Sheet tiedostot Google Drive:ssa.</p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="text-center">
-                    <div class="h-48 mb-6 overflow-hidden rounded-xl bg-blue-100 flex items-center justify-center">
-                        <span class="text-blue-600 font-bold text-xl px-4 italic">"Your Third Image Here"</span>
+                <div class="flex flex-col items-center">
+                    <div class="phone-mockup w-full max-w-[240px] aspect-[9/19] mb-6 border-blue-600/20">
+                        <img src="images/feature2.jpg" 
+                             alt="Social" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Team Sync</h3>
-                    <p class="text-gray-600">Collaborate with your team instantly from anywhere in the world.</p>
+                    <h3 class="font-bold text-lg mb-1">Syöte lomake</h3>
+                    <p class="text-sm text-slate-500 text-center px-4">Syötä tiedot lomakkeella.</p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="text-center">
-                    <div class="h-48 mb-6 overflow-hidden rounded-xl">
-                        <!-- IMAGE 3: Another Feature Image -->
-                        <img src="https://images.unsplash.com/photo-1512428559083-560dfc18b225?auto=format&fit=crop&w=500&q=80" alt="Cloud Sync" class="w-full h-full object-cover">
+                <div class="flex flex-col items-center">
+                    <div class="phone-mockup w-full max-w-[240px] aspect-[9/19] mb-6">
+                        <img src="images/feature3.jpg" 
+                             alt="Cloud" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Cloud Storage</h3>
-                    <p class="text-gray-600">Everything is backed up safely in the cloud for 24/7 access.</p>
+                    <h3 class="font-bold text-lg mb-1">Syötekentät</h3>
+                    <p class="text-sm text-slate-500 text-center px-4">Voit räätälöidä jokaisen sarakkeen syötteen erikseen.</p>
                 </div>
+
+                <!-- Feature 4 -->
+                <div class="flex flex-col items-center">
+                    <div class="phone-mockup w-full max-w-[240px] aspect-[9/19] mb-6">
+                        <img src="images/feature4.jpg" 
+                             alt="Schedule" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">Google Drive</h3>
+                    <p class="text-sm text-slate-500 text-center px-4">Tieto tallentuu Sheet tiedostoon Drive:ssa.</p>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <footer class="p-10 text-center text-gray-500 border-t mt-10">
-        &copy; 2024 MyApp Inc. All rights reserved.
+    <!-- Footer -->
+    <footer class="py-12 text-center text-slate-400 text-xs tracking-widest uppercase bg-white">
+        sami.pyy@gmail.com
     </footer>
 
 </body>
