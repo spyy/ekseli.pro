@@ -1,126 +1,76 @@
 <!DOCTYPE html>
-<html class="h-100" lang="fi">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyApp - Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Mobiilikäyttöliittymä Exceliin">
-    <meta name="author" content="sami.pyy@gmail.com">
-    <title>Ekseli</title>
+    <!-- Header / Nav -->
+    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto">
+        <div class="text-2xl font-bold text-blue-600">MyApp</div>
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Download</button>
+    </nav>
 
-    <meta property="og:url" content="https://ekseli.pro/" />
-    <meta property="og:type" content="application" />
-    <meta property="og:title" content="Ekseli" />
-    <meta property="og:description" content="Mobiilikäyttöliittymä Exceliin" />
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="manifest" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/manifest.json">
-    <link rel="mask-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-    <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico">
-    <meta name="theme-color" content="#712cf9">
-
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-    </style>
-
-    
-    <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet">
-  </head>
-  <body class="d-flex h-100 text-center">    
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="mb-auto">
-        <div>
-          <h3 class="float-md-start mb-0">ekseli.pro</h3>
-          <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Etusivu</a>          
-            <a class="nav-link fw-bold py-1 px-0" href="developers.html">Kehittäjät</a>
-          </nav>
+    <!-- Hero Section (Image 1) -->
+    <section class="max-w-6xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-10 md:mb-0">
+            <h1 class="text-5xl font-extrabold text-gray-900 leading-tight mb-6">Master your productivity with MyApp.</h1>
+            <p class="text-lg text-gray-600 mb-8">The all-in-one solution for teams to stay organized, focused, and ahead of schedule.</p>
+            <div class="space-x-4">
+                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg font-medium inline-block">App Store</a>
+                <a href="#" class="bg-gray-200 text-gray-800 px-8 py-3 rounded-lg font-medium inline-block">Play Store</a>
+            </div>
         </div>
-      </header>
-
-      <main class="px-3">
-        <h1>Mobiili käyttöliittymä Excel tiedostoihisi.</h1>
-        <p class="lead text-left">    
-          Voit puhelimellasi syöttää tietoja Exceliin ja säätää myös itse käyttöliittymän.
-        </p>
-
-        <p class="lead">
-          Ohjelma on ilmainen ja toimii selaimessa.
-        </p>
-                
-        <p class="lead">
-          <a href="app/index.html" class="btn btn-lg btn-dark fw-bold border-dark bg-dark">Kokeile veloituksetta</a>
-        </p>
-
-        <div class="ratio ratio-4x3">          
-          <iframe src="https://www.youtube.com/embed/1rWlkYsMyyA?si=2dJqU2M4tdhhpAQG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <div class="md:w-1/2">
+            <!-- IMAGE 1: Hero Image (App Mockup) -->
+            <img src="static/images/hero.jpg" alt="App Hero" class="rounded-2xl shadow-2xl">
         </div>
+    </section>
 
-      </main>
+    <!-- Features Section (Images 2 & 3) -->
+    <section class="bg-white py-20">
+        <div class="max-center max-w-6xl mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-16 text-gray-900">Why choose us?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Feature 1 -->
+                <div class="text-center">
+                    <div class="h-48 mb-6 overflow-hidden rounded-xl">
+                        <!-- IMAGE 2: Feature Illustration -->
+                        <img src="static/images/photo_2026-03-20_11-26-50.jpg" alt="Data Analytics" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Smart Analytics</h3>
+                    <p class="text-gray-600">Track your progress with real-time data and beautiful charts.</p>
+                </div>
 
-      <footer class="mt-auto text-white-50">
-        <p>
-          <a href="tietosuojaseloste" class="text-white">Tietosuojaseloste</a>
-        </p>
-      </footer>
-    </div>
-  </body>
+                <!-- Feature 2 -->
+                <div class="text-center">
+                    <div class="h-48 mb-6 overflow-hidden rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="text-blue-600 font-bold text-xl px-4 italic">"Your Third Image Here"</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Team Sync</h3>
+                    <p class="text-gray-600">Collaborate with your team instantly from anywhere in the world.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="text-center">
+                    <div class="h-48 mb-6 overflow-hidden rounded-xl">
+                        <!-- IMAGE 3: Another Feature Image -->
+                        <img src="https://images.unsplash.com/photo-1512428559083-560dfc18b225?auto=format&fit=crop&w=500&q=80" alt="Cloud Sync" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Cloud Storage</h3>
+                    <p class="text-gray-600">Everything is backed up safely in the cloud for 24/7 access.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="p-10 text-center text-gray-500 border-t mt-10">
+        &copy; 2024 MyApp Inc. All rights reserved.
+    </footer>
+
+</body>
 </html>
