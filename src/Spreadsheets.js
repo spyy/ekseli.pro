@@ -55,7 +55,7 @@ const Spreadsheets = props => {
   switch (props.activeNavbarItem) {    
     case 'Ohje':
       return (
-        <Instructions onRefresh={props.onRefresh} />
+        <Instructions token={props.token} onRefresh={props.onRefresh} />
       );
     default:
       return (renderSpreadsheets(props));

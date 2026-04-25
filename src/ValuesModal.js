@@ -101,8 +101,10 @@ const ValuesModal = props => {
     console.log(column);
     console.log('<<<<<<<<<<<<<');
     let defaultValue = '';
-    
-    if (column?.value?.length) {
+
+    if(props.rowData.at(cell)) {
+        defaultValue = props.rowData[cell];
+    } else if (column?.value?.length) {
         defaultValue = column.value;
     } else {
         defaultValue = '';

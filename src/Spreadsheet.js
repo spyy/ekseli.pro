@@ -7,7 +7,8 @@ import AddRow from './AddRow';
 
 import sheetDefault from './config/sheet.json'
 
-import * as utils from './utils';
+import * as api from './api';
+
 
 
 const Spreadsheet = props => {
@@ -72,7 +73,17 @@ const Spreadsheet = props => {
         setState('metadataFound');
     }
 
-    const handleErrorResponse = err => {
+    const handleDeveloperMetadataError = err => {
+        console.log(err);
+
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setState('metadataNotFound');
+        }
+    }
+
+    const handleError = err => {
         console.log(err);
 
         if (err?.status === 401) {
@@ -83,19 +94,7 @@ const Spreadsheet = props => {
     }
 
     const getDeveloperMetadata = () => {
-        const metadataId = spreadsheet.sheets[selectedSheet].properties.sheetId + 1;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet.spreadsheetId + '/developerMetadata/' + metadataId;
-        const args = {
-          'path': path
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseBody)
-          .then(utils.parsemetadataValue)
-          .then(handleDeveloperMetadataResponse)
-          .catch(handleErrorResponse)
+        api.getDeveloperMetadata(props.token, spreadsheet, selectedSheet, handleDeveloperMetadataResponse, handleDeveloperMetadataError);        
     }
 
     const handleGetSpreadsheetResponse = body => {
@@ -107,20 +106,7 @@ const Spreadsheet = props => {
     }
 
     const getSpreadsheet = () => {
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheet.id;
-        const args = {
-          'path': path,
-          'params': {
-            'fields': 'sheets.properties,spreadsheetId,properties.title'
-          }
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseJson)
-          .then(handleGetSpreadsheetResponse)
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
+        api.getSpreadsheet(props.token, props.spreadsheet, handleGetSpreadsheetResponse, handleError);
     }
 
     const updateIfNeeded = range => {
@@ -134,29 +120,8 @@ const Spreadsheet = props => {
         }
     }
 
-    const append = () => {       
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet.spreadsheetId + '/values/' + appendRange + ':append';
-        const args = {
-          'path': path,
-          'method': 'POST',
-          'params': {
-            'valueInputOption': 'RAW'
-          },
-          'body': {
-            'values': [appendValues]
-          }
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseResult)
-          .then(utils.parseUpdates)
-          .then(utils.parseUpdatedRange)
-          .then(utils.parseA1Notation)
-          .then(utils.convertA1Notation)
-          .then(updateIfNeeded)
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
+    const append = () => {   
+        api.append(props.token, spreadsheet.spreadsheetId, appendRange, appendValues, updateIfNeeded, handleError);
     }
 
     const onSheet = sheet => {
@@ -184,7 +149,7 @@ const Spreadsheet = props => {
             );   
         } else {
             return (
-                <Values spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } metadata={ metadata } onTokenExpired={ props.onTokenExpired } />                
+                <Values token={props.token} spreadsheetId={ spreadsheet.spreadsheetId } sheet={ spreadsheet.sheets[selectedSheet] } metadata={ metadata } onTokenExpired={ props.onTokenExpired } />                
             );
         }        
     }        
@@ -195,7 +160,7 @@ const Spreadsheet = props => {
                 <main className="container">                  
                     <div className="card border-light">
                         <Sheets spreadsheet={ spreadsheet } selected={ selectedSheet } onSheet={onSheet} />
-                        <Metadata spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } metadata={ metadata } onTokenExpired={ props.onTokenExpired } />
+                        <Metadata token={props.token} spreadsheetId={ spreadsheet.spreadsheetId } sheetId={ spreadsheet.sheets[selectedSheet].properties.sheetId } metadata={ metadata } onTokenExpired={ props.onTokenExpired } />
                     </div>
                     <div className="form-check form-switch my-4">
                         <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled />

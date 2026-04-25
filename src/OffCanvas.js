@@ -7,8 +7,7 @@ import Spreadsheet from './Spreadsheet';
 import Content from './Content';
 import Breadcrumb from './Breadcrumb';
 
-
-import * as utils from './utils';
+import * as api from './api';
 
 const navbarItems = ['Spreadsheet', 'Käyttöliittymä', 'Ohje'];
 
@@ -57,19 +56,7 @@ const OffCanvas = props => {
   }
 
   const getFiles = () => {
-    const args = {
-      'path': 'https://www.googleapis.com/drive/v3/files',
-      'params': {
-        'spaces': 'drive',
-        'fields': '*',
-        'q': 'mimeType = "application/vnd.google-apps.spreadsheet" and trashed = false'
-      }
-    };
-    
-    window.gapi.client.request(args)
-      .then(utils.parseResult)
-      .then(handleGetFilesResponse)
-      .catch(err => console.log(err))
+    api.getFiles(props.token, handleGetFilesResponse);
   }
 
   const clear = () => {
@@ -141,7 +128,7 @@ const OffCanvas = props => {
           }        
         case 'Ohje':
           return (
-            <Instructions onRefresh={onRefresh} />
+            <Instructions token={props.token} onRefresh={onRefresh} />
           );
         default:
           return (null);
@@ -166,7 +153,7 @@ const OffCanvas = props => {
         <>
           <Navbar items={navbarItems} active={activeNavbarItem} onItem={onNavbarItem} onSignOut={props.onSignOut} />   
           <Breadcrumb activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } onBack={() => setState('spreadsheets')} />
-          <Spreadsheet activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } action={action} onTokenExpired={ props.onTokenExpired } />
+          <Spreadsheet token={props.token} activeNavbarItem={activeNavbarItem} spreadsheet={ spreadsheet } action={action} onTokenExpired={ props.onTokenExpired } />
         </>
       );
     case 'token expired':

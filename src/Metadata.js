@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import MetadataModal from './MetadataModal';
 
-import * as utils from './utils';
-
+import * as api from './api';
 
 
 const Metadata = props => {
@@ -34,7 +33,7 @@ const Metadata = props => {
         }
     },[state]);
 
-    const handleUpdateResponse = body => {
+    const handleResponse = body => {
         console.log(body);
 
         setState('metadataUpdated');
@@ -42,73 +41,16 @@ const Metadata = props => {
 
     const createDeveloperMetadata = () => {
         const metadataValue = Object.assign({}, metadata);
-        metadataValue.updatedAt = Date.now();        
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
-        const args = {
-            path: path,
-            method: 'POST',
-            body: {
-                requests: [{
-                    createDeveloperMetadata: {
-                        developerMetadata: {
-                            metadataId: props.sheetId + 1,
-                            metadataKey: 'configuration',
-                            metadataValue: JSON.stringify(metadataValue),
-                            visibility: 'DOCUMENT',
-                            location: {
-                                sheetId: props.sheetId
-                            }
-                        }
-                    }
-                }]
-            }
-        };
+        metadataValue.updatedAt = Date.now();
 
-        console.log(path);
-        console.log(args);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseBody)
-          .then(handleUpdateResponse)
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
+        api.createDeveloperMetadata(props.token, props.spreadsheetId, props.sheetId, metadataValue, handleResponse, props.onTokenExpired);
     }
 
     const updateDeveloperMetadata = () => {
         const metadataValue = Object.assign({}, metadata);
         metadataValue.updatedAt = Date.now();
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + ':batchUpdate';
-        const args = {
-            path: path,
-            method: 'POST',
-            body: {
-                requests: [{
-                    updateDeveloperMetadata: {
-                        fields: '*',
-                        dataFilters: [{
-                            developerMetadataLookup: {
-                                metadataId: props.sheetId + 1
-                            }
-                        }],
-                        developerMetadata: {
-                            metadataKey: 'configuration',
-                            metadataValue: JSON.stringify(metadataValue),
-                            location: {
-                                sheetId: props.sheetId
-                            },
-                            visibility: 'DOCUMENT'
-                        }
-                    }
-                }]
-            }
-        };
 
-        console.log(path);
-        console.log(args);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseBody)
-          .then(handleUpdateResponse)
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
+        api.updateDeveloperMetadata(props.token, props.spreadsheetId, props.sheetId, metadataValue, handleResponse, props.onTokenExpired);
     }
 
     const onSave = () => {

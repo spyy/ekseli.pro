@@ -1,6 +1,5 @@
 
 export const handleUnauthorized = (err, callback) => {
-    console.log('handleUnauthorized');
     console.log(err);
     
     if (err?.status === 401) {

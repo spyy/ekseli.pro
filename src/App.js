@@ -1,4 +1,4 @@
-import React, { useState, useRef} from 'react';
+import React, { useState, useRef, useEffect} from 'react';
 
 import Loading from './Loading';
 import OffCanvas from './OffCanvas';
@@ -9,19 +9,37 @@ import TokenExpired from './TokenExpired';
 import appConfig from './config/app.json';
 
 
-//window.gapi.load('client', () => console.log('gapi loaded'));
-
-
 const App = () => {
-  const [state, setState] = useState('logged out');
+  const [state, setState] = useState('loaded');
+  const [token, setToken] = useState('');
   
   const tokenClient = useRef(0);
+
+  useEffect(() => {
+      console.log('state: ' + state);
+  
+      switch (state) {
+        case 'loaded':
+          if (initTokenClient()) {
+            setState('initialized');
+          }
+          break;
+        case 'initialized':
+        case 'logged in':
+        case 'logged out':
+        case 'token expired':
+          break;
+        default:
+          break;
+      }
+    },[state]);
 
   const handleTokenResponse = tokenResponse => {
     console.log(tokenResponse);
 
-    if (tokenResponse && tokenResponse.access_token) {    
-        setState('logged in');
+    if (tokenResponse && tokenResponse.access_token) {  
+      setToken(tokenResponse.access_token);  
+      setState('logged in');
     }
   }
 
@@ -47,7 +65,8 @@ const App = () => {
   const requestAccessToken = () => {
     console.log('requestAccessToken');
 
-    if (window.gapi.client.getToken() === null) {
+    if (token === null) {
+      // prompts: '' (none), 'consent' (force screen), or 'select_account'
         tokenClient.current.requestAccessToken({prompt: 'consent'});
     } else {
         tokenClient.current.requestAccessToken({prompt: ''});
@@ -57,11 +76,7 @@ const App = () => {
   const onSignIn = () => {
     console.log('onSignIn');
 
-    if (initTokenClient()) {
-      requestAccessToken();
-    } else {
-      console.log('signin failed');
-    }
+    requestAccessToken();
   }
 
   const onSignOut = () => {
@@ -73,6 +88,8 @@ const App = () => {
   }
 
   switch (state) {
+    case 'loaded':
+    case 'initialized':
     case 'logged out':
       return (
         <>
@@ -83,7 +100,7 @@ const App = () => {
     case 'logged in':
       return (
         <>
-          <OffCanvas onSignOut={onSignOut} onTokenExpired={onTokenExpired} />
+          <OffCanvas token={token} onSignOut={onSignOut} onTokenExpired={onTokenExpired} />
         </>
       );
     case 'token expired':

@@ -46,10 +46,15 @@ const AddRow = props => {
 
 
     const renderColumn = (props, column, cell, ref) => {
+        console.log('renderColumn 1');
+        console.log(JSON.stringify(column));        
+
         const name = column.name ? column.name : columnDefault.name;
         const type = column.type ? column.type : columnDefault.type;
         const inputmode = column.inputmode ? column.inputmode : columnDefault.inputmode;
         const value = column.value ? column.value : columnDefault.value;
+
+        console.log(JSON.stringify(columnDefault));
 
         if (props.metadata.columnCount > cell) {
             return (

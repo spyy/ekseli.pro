@@ -23,4 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # configurations
-src/config
+src/config/app.json
+src/config/dev.json
+src/config/prod.json
+

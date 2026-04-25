@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import ValuesModal from './ValuesModal';
 
-import * as utils from './utils';
-
+import * as api from './api';
 
 
 const Values = props => {
@@ -51,20 +50,20 @@ const Values = props => {
         }
     }
 
+    const handleUpdateValuesError = err => {
+        console.log(err);
+
+        if (err?.status === 401) {
+            props.onTokenExpired();
+        } else {
+            setState('values');
+        }
+    }
+
     const getValues = () => {    
         const range = props.sheet.properties.title;
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/values/' + range;
-        const args = {
-          'path': path
-        };
 
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseResult)
-          .then(utils.parseValues)
-          .then(handleGetValuesResponse)
-          .catch(handleGetValuesError)
+        api.getValues(props.token, range, props.spreadsheetId, handleGetValuesResponse, handleGetValuesError);
     }
 
     const handleUpdateValuesResponse = (body, values, row) => {
@@ -79,26 +78,8 @@ const Values = props => {
         setState('values');
     }
 
-    const updateValues = (values, row) => {   
-        const range = props.sheet.properties.title + '!' + row + ':' + row;     
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/' + props.spreadsheetId + '/values/' + range;
-        const args = {
-          'path': path,
-          'method': 'PUT',
-          'params': {
-            'valueInputOption': 'RAW'
-          },
-          'body': {
-            'values': [values]
-          }
-        };
-
-        console.log(path);
-        
-        window.gapi.client.request(args)
-          .then(utils.parseResult)
-          .then(body => handleUpdateValuesResponse(body, values, row))
-          .catch(err => utils.handleUnauthorized(err, props.onTokenExpired))
+    const updateValues = (values, row) => {
+        api.updateValues(props.token, props.sheet.properties.title, props.spreadsheetId, values, row, handleUpdateValuesResponse, handleUpdateValuesError);
     }
 
     const onHideModal = () => {

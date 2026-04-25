@@ -2,28 +2,21 @@ import React, { useState } from 'react';
 
 import SpreadsheetModal from './SpreadsheetModal';
 
+import * as api from './api';
+
 
 const Instructions = props => {
     const [state, setState] = useState('instructions');
 
+    const handleResponse = result => {
+        console.log(result);
+
+        props.onRefresh();
+    }
+
     const onSave = title => {
-        const body = {
-            properties: {
-                title: title
-            }
-        };
-        const path = 'https://sheets.googleapis.com/v4/spreadsheets/';
-        const args = {
-          'path': path,
-          'method': 'POST',
-          'body': body
-        };
-
-        window.gapi.client.request(args)
-          .then(res => console.log(res))
-          .then(() => props.onRefresh())
-          .catch(err => console.log(err))
-
+        api.createSpreadsheet(props.token, title, handleResponse, err => console.log(err));
+        
         setState('hideModal');
     }
 
