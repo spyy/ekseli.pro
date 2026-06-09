@@ -6,7 +6,7 @@ import Navbar from './Navbar';
 import Introduction from './Introduction';
 import TokenExpired from './TokenExpired';
 
-import appConfig from './config/app.json';
+import appConfig from './config/secret/app.json';
 
 
 const App = () => {

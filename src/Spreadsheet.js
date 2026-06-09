@@ -42,6 +42,9 @@ const Spreadsheet = props => {
                 setState('metadata');
                 break;
             case 'metadata':
+                setState('values');
+                break;
+            case 'values':
                 break;
             case 'append':
                 append();
@@ -60,7 +63,7 @@ const Spreadsheet = props => {
     },[state]);
 
     const handleDeveloperMetadataResponse = metadataValue => {
-        console.log('handleResponse');
+        console.log(metadataValue);
 
         switch (typeof(metadataValue)){
             case 'object':
@@ -186,10 +189,11 @@ const Spreadsheet = props => {
         case 'getDeveloperMetadata':
         case 'metadataNotFound':
         case 'metadataFound':
+        case 'metadata':        
         case 'append':
         case 'appendAgain':
             return (<></>);
-        case 'metadata':        
+        case 'values':        
             return render(props);
         case 'sheetSelected':
             return (<></>);
